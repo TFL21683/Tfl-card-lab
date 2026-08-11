@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFL Card Lab - Diagnostic Surface Correction</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --poke-red: #ff1c1c;
+            --poke-gold: #ffd700;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-gold);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .section-header {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-red);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--poke-red);
+            padding-left: 0.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: 2px solid var(--poke-gold);
+            border-color: transparent;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 600px) {
+            .grid { grid-template-columns: 1fr; }
+        }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--poke-red);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: background 0.2s ease;
+            margin-top: 1rem;
+        }
+
+        .btn-submit:hover {
+            background-color: #d01414;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>TFL Card Lab</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Diagnostic Surface Correction & Intake Form</p>
+    </header>
+
+    <form id="intakeForm">
+        <div class="section-header">Client Details</div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="clientName">Full Name</label>
+                <input type="text" id="clientName" name="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="section-header" style="margin-top: 2rem;">Card & Service Selection</div>
+        <div class="form-group">
+            <label for="cardDetails">Card Name & Set Number</label>
+            <input type="text" id="cardDetails" placeholder="e.g., Charizard Base Set #4/102" required>
+        </div>
+
+        <div class="form-group">
+            <label for="serviceTier">Select Service Tier</label>
+            <select id="serviceTier" required>
+                <option value="" disabled selected>Select a service level...</option>
+                <option value="standard">Standard Surface Cleaning & Prep</option>
+                <option value="advanced">Advanced Dent/Crease Correction</option>
+                <option value="full">Full Restorative Diagnostic & Treatment</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Special Instructions or Known Issues</label>
+            <textarea id="notes" rows="4" placeholder="Detail any specific scratches, dents, or concerns..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Intake Request</button>
+    </form>
+</div>
+
+</body>
+</html>
