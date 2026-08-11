@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFL Card Lab - Diagnostic Surface Correction & Valuation Intake</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --border-color: #334155;
+            --poke-red: #ff1c1c;
+            --poke-gold: #ffd700;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            padding: 2rem 1rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-gold);
+            font-size: 1.8rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .section-header {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-red);
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            margin-top: 2rem;
+            border-left: 4px solid var(--poke-red);
+            padding-left: 0.5rem;
+        }
+
+        .form-group { margin-bottom: 1.2rem; position: relative; }
+        label { display: block; font-weight: 600; margin-bottom: 0.4rem; color: var(--text-main); }
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--text-main);
+            font-size: 1rem;
+        }
+
+        /* Live Search & Card Display */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg-dark);
+            border: 1px solid var(--poke-gold);
+            border-radius: 6px;
+            max-height: 250px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+        }
+        .search-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .search-item:hover { background-color: #334155; }
+        .search-item img { height: 40px; }
+
+        .card-preview-container {
+            display: none;
+            background: var(--bg-dark);
+            border: 1px solid var(--poke-gold);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        .card-preview-container img { height: 180px; border-radius: 6px; }
+
+        .valuation-box {
+            background: #0f172a;
+            border: 1px solid var(--border-color);
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } .card-preview-container { flex-direction: column; text-align: center; } }
+
+        .btn-submit {
+            width: 100%;
+            background-color: var(--poke-red);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 1rem;
+        }
+        .btn-submit:hover { background-color: #d01414; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>TFL Card Lab</h1>
+        <p style="color: var(--text-muted); margin-top: 0.5rem;">Diagnostic Surface Correction, Valuation & Intake Form</p>
+    </header>
+
+    <form id="intakeForm" action="https://formspree.io/f/myegwlnz" method="POST">
+        <!-- Client Information -->
+        <div class="section-header" style="margin-top: 0;">1. Client Information</div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="clientName">Full Name</label>
+                <input type="text" id="clientName" name="clientName" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <!-- Live Database Card Search & Valuation -->
+        <div class="section-header">2. Live Card Search & Market Valuation</div>
+        <div class="form-group">
+            <label for="cardSearch">Search Card (e.g., "Charizard Base Set" or "Gengar Unbroken Bonds")</label>
+            <input type="text" id="cardSearch" placeholder="Type card name & set..." autocomplete="off">
+            <div id="searchResults" class="search-results"></div>
+        </div>
+
+        <!-- Selected Card Display Panel -->
+        <div id="cardPreview" class="card-preview-container">
+            <img id="previewImg" src="" alt="Selected Card Preview">
+            <div>
+                <h3 id="previewTitle" style="color: var(--poke-gold);">Card Title</h3>
+                <p id="previewSet" style="color: var(--text-muted);"></p>
+                <p style="margin-top: 0.5rem;">Market Raw Price (TCGPlayer): <strong id="previewPrice" style="color: #4ade80;">$0.00</strong></p>
+            </div>
+        </div>
+
+        <!-- Hidden Inputs Sent via Formspree -->
+        <input type="hidden" id="cardDetails" name="cardDetails">
+        <input type="hidden" id="declaredRawValue" name="declaredRawValue">
+        <input type="hidden" id="liabilityCap" name="liabilityCap">
+
+        <div class="grid" style="margin-top: 1rem;">
+            <div class="form-group">
+                <label for="cardFinish">Finish / Card Stock</label>
+                <select id="cardFinish" name="cardFinish" required>
+                    <option value="" disabled selected>Select stock type...</option>
+                    <option value="Vintage WOTC">Vintage WOTC</option>
+                    <option value="Modern Foil / SAR">Modern Foil / SAR</option>
+                    <option value="Japanese / Import">Japanese / Import</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="valueTierDisplay">Declared Value Tier</label>
+                <input type="text" id="valueTierDisplay" readonly placeholder="Auto-calculated from card choice" style="background-color: #1e293b; color: var(--poke-gold);">
+            </div>
+        </div>
+
+        <!-- Diagnostic Checklist -->
+        <div class="section-header">3. Diagnostic Inspection & Defect Self-Assessment</div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="frontSurfaceIssues">Front Surface / Holographic Layer</label>
+                <select id="frontSurfaceIssues" name="frontSurfaceIssues">
+                    <option value="Pass/Clean">Pass / Clean</option>
+                    <option value="Foil Bowing / Curvature">Foil Bowing / Curvature (Tier 1)</option>
+                    <option value="Surface Dirt, Oils & Wax">Surface Dirt, Oils & Wax (Tier 1)</option>
+                    <option value="Holo Scratches / Light Haze">Holo Scratches / Light Haze (Tier 2)</option>
+                    <option value="Factory Print / Roller Lines">Factory Print / Roller Lines (Tier 2)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="edgeCornerIssues">Edges & Corners</label>
+                <select id="edgeCornerIssues" name="edgeCornerIssues">
+                    <option value="Pass/Clean">Pass / Clean</option>
+                    <option value="Edge Whitening / Chipping">Edge Whitening / Chipping (Uncorrectable)</option>
+                    <option value="Side Indents & Pack Crimps">Side Indents & Pack Crimps (Tier 2)</option>
+                    <option value="Corner Indent / Binder Impression">Corner Indent / Binder Impression (Tier 2)</option>
+                    <option value="Corner Softness / Layer Split">Corner Softness / Layer Split (Tier 3)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="form-group">
+                <label for="backCoreIssues">Back Surface & Core Structure</label>
+                <select id="backCoreIssues" name="backCoreIssues">
+                    <option value="Pass/Clean">Pass / Clean</option>
+                    <option value="Back Scratches / Print Dots">Back Scratches / Print Dots (Tier 2)</option>
+                    <option value="Surface Wrinkle (No Color Break)">Surface Wrinkle (No Color Break) (Tier 3)</option>
+                    <option value="Deep Crease (Color / Core Broken)">Deep Crease (Color / Core Broken) (Tier 3)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="centeringEst">Centering Estimate Ratio</label>
+                <input type="text" id="centeringEst" name="centeringEst" placeholder="e.g., Front 60/40, Back 50/50">
+            </div>
+        </div>
+
+        <!-- Service Tiers, Supplies & Logistics -->
+        <div class="section-header">4. Service Tier, Protection & Logistics</div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="serviceTier">Required Service Tier</label>
+                <select id="serviceTier" name="serviceTier" required>
+                    <option value="" disabled selected>Select service level...</option>
+                    <option value="Tier 1 Basic ($5-$15)">Tier 1 Basic ($5-$15) - Cleaning/Flattening</option>
+                    <option value="Tier 2 Moderate ($15-$35)">Tier 2 Moderate ($15-$35) - Pressing/Indents</option>
+                    <option value="Tier 3 Heavy ($40-$80+)">Tier 3 Heavy ($40-$80+) - Crease Mitigation</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="protectionBundle">Vault Prep / Supply Add-Ons</label>
+                <select id="protectionBundle" name="protectionBundle">
+                    <option value="None">None (Standard Sleeve/Saver Return)</option>
+                    <option value="CMB-01 Vault Prep Bundle ($0.65)">CMB-01 Vault Prep Bundle ($0.65/ea)</option>
+                    <option value="CMB-02 Showcase Bundle ($3.50)">CMB-02 Showcase Bundle ($3.50/ea)</option>
+                    <option value="SUP-05 Graded Slab Case ($7.50)">SUP-05 Graded Slab Case ($7.50/ea)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="shippingCarrier">Return Shipping Option</label>
+            <select id="shippingCarrier" name="shippingCarrier" required>
+                <option value="USPS Ground Advantage ($19.10 RT)">USPS Ground Advantage ($19.10 RT)</option>
+                <option value="USPS Priority Mail ($18.08-$27.30 RT)">USPS Priority Mail ($18.08-$27.30 RT)</option>
+                <option value="UPS Ground / FedEx Home ($23.00-$30.00 RT)">UPS Ground / FedEx Home ($23.00-$30.00 RT)</option>
+            </select>
+        </div>
+
+        <!-- Liability Summary Banner -->
+        <div class="valuation-box">
+            <h4 style="color: var(--poke-gold); margin-bottom: 0.5rem;">Estimated Liability & Risk Summary</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+                Under Pennsylvania Safe Harbor guidelines and TFL Card Lab terms, maximum financial liability for inadvertent damage or loss is capped at the lower of the card's declared raw market value or the service labor fee[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span).
+            </p>
+            <p style="margin-top: 0.5rem; font-size: 0.95rem;">
+                <strong>Liability Cap Limit:</strong> <span id="liabilityCapDisplay" style="color: var(--poke-gold);">$0.00</span>
+            </p>
+        </div>
+
+        <div class="form-group" style="margin-top: 1rem;">
+            <label for="notes">Special Restoration Instructions</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Specify any specific target grades, high-priority scratches, or restoration goals..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">Submit Intake & Estimate Request</button>
+    </form>
+</div>
+
+<!-- JavaScript Live API & Calculation Logic -->
+<script>
+    const searchInput = document.getElementById('cardSearch');
+    const searchResults = document.getElementById('searchResults');
+    const previewBox = document.getElementById('cardPreview');
+    const previewImg = document.getElementById('previewImg');
+    const previewTitle = document.getElementById('previewTitle');
+    const previewSet = document.getElementById('previewSet');
+    const previewPrice = document.getElementById('previewPrice');
+
+    const cardDetailsHidden = document.getElementById('cardDetails');
+    const declaredValueHidden = document.getElementById('declaredRawValue');
+    const liabilityCapHidden = document.getElementById('liabilityCap');
+    const valueTierDisplay = document.getElementById('valueTierDisplay');
+    const liabilityCapDisplay = document.getElementById('liabilityCapDisplay');
+
+    let debounceTimer;
+
+    searchInput.addEventListener('input', function() {
+        clearTimeout(debounceTimer);
+        const query = this.value.trim();
+        if (query.length < 3) {
+            searchResults.style.display = 'none';
+            return;
+        }
+
+        debounceTimer = setTimeout(() => {
+            fetch(`https://api.pokemontcg.io/v2/cards?q=name:"*${query}*"&pageSize=6`)
+                .then(res => res.json())
+                .then(data => {
+                    searchResults.innerHTML = '';
+                    if (data.data && data.data.length > 0) {
+                        data.data.forEach(card => {
+                            const item = document.createElement('div');
+                            item.className = 'search-item';
+                            
+                            // Extract TCGPlayer Market Price
+                            let price = 0;
+                            if (card.tcgplayer && card.tcgplayer.prices) {
+                                const p = card.tcgplayer.prices;
+                                price = (p.holofoil || p.normal || p.reverseHolofoil || p.unlimitedHolofoil || {}).market || 0;
+                            }
+
+                            item.innerHTML = `
+                                <img src="${card.images.small}" alt="${card.name}">
+                                <div>
+                                    <strong>${card.name}</strong> (${card.set.name})<br>
+                                    <small style="color: #94a3b8;">Est. Market Raw: $${price.toFixed(2)}</small>
+                                </div>
+                            `;
+
+                            item.addEventListener('click', () => {
+                                selectCard(card, price);
+                            });
+
+                            searchResults.appendChild(item);
+                        });
+                        searchResults.style.display = 'block';
+                    } else {
+                        searchResults.style.display = 'none';
+                    }
+                })
+                .catch(err => console.error(err));
+        }, 400);
+    });
+
+    function selectCard(card, price) {
+        searchResults.style.display = 'none';
+        searchInput.value = `${card.name} - ${card.set.name} (#${card.number})`;
+        
+        previewImg.src = card.images.small;
+        previewTitle.textContent = `${card.name} (#${card.number})`;
+        previewSet.textContent = `Set: ${card.set.name} | Rarity: ${card.rarity || 'N/A'}`;
+        previewPrice.textContent = `$${price.toFixed(2)}`;
+        previewBox.style.display = 'flex';
+
+        // Calculate Tier and Financial Liabilities
+        let tier = "Standard (<$200)";
+        if (price >= 1000) {
+            tier = "Ultra High-Value ($1,000+) [+$50-$75/hr + 2%-3% Fee]";
+        } else if (price >= 200) {
+            tier = "High-Value ($200-$1,000) [+1.5%-2.0% Fee]";
+        }
+
+        // Set Form Hidden Values
+        cardDetailsHidden.value = `${card.name} - ${card.set.name} (#${card.number})`;
+        declaredValueHidden.value = `$${price.toFixed(2)}`;
+        liabilityCapHidden.value = `$${price.toFixed(2)}`;
+        valueTierDisplay.value = tier;
+        liabilityCapDisplay.textContent = `$${price.toFixed(2)} (or labor fee if lower)`;
+    }
+
+    // Close dropdown on click outside
+    document.addEventListener('click', function(e) {
+        if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+            searchResults.style.display = 'none';
+        }
+    });
+</script>
+
+</body>
+</html>
