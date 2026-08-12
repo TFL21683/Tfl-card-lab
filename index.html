@@ -1,0 +1,1078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFL Card Lab - Comprehensive Master Intake Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #060913;
+            --card-bg: #0f172a;
+            --card-inner: #1e293b;
+            --border-color: #334155;
+            --poke-red: #f43f5e;
+            --poke-gold: #fbbf24;
+            --glow-gold: rgba(251, 191, 36, 0.25);
+            --neon-blue: #38bdf8;
+            --glow-blue: rgba(56, 189, 248, 0.25);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success-green: #10b981;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, var(--bg-dark) 70%);
+            color: var(--text-main);
+            padding: 2.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 500px;
+            background: radial-gradient(circle at 50% 20%, rgba(56, 189, 248, 0.08) 0%, transparent 60%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1100px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.9), 0 0 30px rgba(56, 189, 248, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 2.5rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-gold);
+            font-size: 2.8rem;
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--glow-gold);
+            text-align: center;
+            width: 100%;
+        }
+
+        .tech-badge-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 0.4rem 1.2rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 10px var(--glow-blue);
+        }
+
+        .section-header {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-red);
+            font-size: 1.2rem;
+            margin-bottom: 1.2rem;
+            margin-top: 2.5rem;
+            border-left: 4px solid var(--poke-red);
+            padding-left: 0.8rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-shadow: 0 0 8px rgba(244, 63, 94, 0.4);
+        }
+
+        .card-entry-block {
+            background-color: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 1.8rem;
+            margin-bottom: 1.8rem;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .card-entry-block:hover { 
+            border-color: var(--neon-blue); 
+            box-shadow: 0 10px 30px rgba(56, 189, 248, 0.15);
+        }
+
+        .card-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+        }
+
+        .btn-remove-card {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--poke-red);
+            border: 1px solid var(--poke-red);
+            padding: 0.4rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .btn-remove-card:hover { background: var(--poke-red); color: white; box-shadow: 0 0 10px rgba(244, 63, 94, 0.5); }
+
+        .form-group { margin-bottom: 1.3rem; position: relative; }
+        label { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main); font-size: 0.9rem; }
+        
+        .guide-link {
+            color: var(--neon-blue);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .guide-link:hover { color: var(--poke-gold); }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.85rem 1rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--poke-gold);
+            box-shadow: 0 0 12px var(--glow-gold);
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(4, 6, 15, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--poke-gold);
+            border-radius: 16px;
+            max-width: 800px;
+            width: 100%;
+            padding: 2.5rem;
+            box-shadow: 0 0 40px var(--glow-gold);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            position: absolute;
+            top: 1.2rem; right: 1.2rem;
+            background: var(--poke-red);
+            color: white;
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+        .modal-close:hover { transform: scale(1.1); }
+
+        .sketch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        .sketch-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            border-radius: 10px;
+        }
+        .sketch-box {
+            width: 100%;
+            height: 110px;
+            background: #111827;
+            border: 1px solid var(--neon-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            color: var(--neon-blue);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ill-scratch { position: absolute; width: 100px; height: 2px; background: var(--poke-red); transform: rotate(-20deg); box-shadow: 0 0 6px var(--poke-red); }
+        .ill-whitening { position: absolute; bottom: 6px; left: 12px; right: 12px; height: 4px; border-bottom: 2px dashed var(--poke-gold); }
+        .ill-crease { position: absolute; width: 120px; height: 3px; background: #f43f5e; box-shadow: 0 0 10px #f43f5e; transform: rotate(15deg); }
+        .ill-bow { position: absolute; width: 100px; height: 35px; border-top: 3px solid var(--neon-blue); border-radius: 50%; top: 35px; }
+
+        .search-results {
+            position: absolute;
+            top: 100%; left: 0; right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--poke-gold);
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 100;
+            display: none;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.9);
+        }
+        .search-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: background 0.2s;
+        }
+        .search-item:hover { background-color: var(--card-inner); }
+        .search-item img { height: 55px; border-radius: 6px; border: 1px solid var(--border-color); }
+
+        .card-preview-container {
+            display: none;
+            background: var(--bg-dark);
+            border: 1px solid var(--poke-gold);
+            padding: 1.5rem;
+            border-radius: 10px;
+            margin-top: 1.2rem;
+            gap: 1.8rem;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+        .card-preview-container img { height: 190px; border-radius: 8px; box-shadow: 0 8px 20px rgba(0,0,0,0.6); border: 1px solid var(--border-color); }
+
+        .btn-add-card {
+            width: 100%;
+            background: rgba(56, 189, 248, 0.05);
+            border: 2px dashed var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            padding: 1.2rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+        .btn-add-card:hover {
+            background: rgba(56, 189, 248, 0.15);
+            box-shadow: 0 0 20px var(--glow-blue);
+            border-color: var(--poke-gold);
+            color: var(--poke-gold);
+        }
+
+        .matrix-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1.2rem;
+            background: var(--bg-dark);
+            border-radius: 10px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        .matrix-table th, .matrix-table td {
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            text-align: left;
+            vertical-align: top;
+        }
+        .matrix-table th { background: #111827; color: var(--poke-gold); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; letter-spacing: 0.5px; }
+        
+        .defect-checkbox-group {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.7rem;
+        }
+        .defect-checkbox-group label {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            font-weight: normal;
+            font-size: 0.9rem;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+        .defect-checkbox-group input[type="checkbox"] {
+            width: 18px; height: 18px;
+            accent-color: var(--poke-red);
+            cursor: pointer;
+        }
+
+        .package-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        .package-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.4rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .package-card:hover { border-color: var(--poke-gold); box-shadow: 0 5px 20px rgba(251, 191, 36, 0.15); }
+        .package-card label {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.9rem;
+            color: var(--poke-gold);
+            margin-bottom: 0.6rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+        }
+        .package-card ul {
+            list-style: none;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            padding-left: 0;
+            margin-top: 0.6rem;
+        }
+        .package-card li { margin-bottom: 0.4rem; display: flex; align-items: center; gap: 0.5rem; }
+        .package-card input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--poke-gold); cursor: pointer; }
+
+        .legal-box {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 1.8rem;
+            border-radius: 10px;
+            max-height: 220px;
+            overflow-y: auto;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+        }
+        .legal-box h4 { color: var(--text-main); margin-bottom: 0.6rem; font-family: 'Orbitron', sans-serif; font-size: 0.95rem; }
+
+        .financial-summary {
+            background: var(--card-inner);
+            border: 2px solid var(--poke-gold);
+            padding: 1.8rem;
+            border-radius: 14px;
+            margin-top: 2.5rem;
+            box-shadow: 0 0 25px var(--glow-gold);
+        }
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+        .summary-row.total {
+            border-bottom: none;
+            font-weight: bold;
+            font-size: 1.4rem;
+            color: var(--poke-gold);
+            padding-top: 1.2rem;
+        }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } .card-preview-container { flex-direction: column; text-align: center; } .sketch-grid { grid-template-columns: 1fr; } .container { padding: 1.5rem; } }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--poke-red) 0%, #9f1239 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.25rem;
+            padding: 1.4rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 2rem;
+            letter-spacing: 2px;
+            box-shadow: 0 6px 25px rgba(244, 63, 94, 0.5);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.7);
+        }
+    </style>
+</head>
+<body>
+
+<div id="guideModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" onclick="toggleGuide(false)">✕</button>
+        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem;">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--poke-gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+            <h3 style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold);">Interactive Defect Blueprints & Expectations</h3>
+        </div>
+        <p style="font-size: 0.88rem; color: var(--text-muted);">Inspect structural restoration thresholds before checking multiple zones.</p>
+        
+        <div class="sketch-grid">
+            <div class="sketch-card">
+                <div class="sketch-box">
+                    <span>Foil Bowing & C/S Curve</span>
+                    <div class="ill-bow"></div>
+                </div>
+                <strong style="font-size: 0.88rem; color: var(--text-main);">1. Holo / Reverse Bowing</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;"><strong>Correctable:</strong> 95%-100% flat via RH-controlled chamber (65–70%) and weighted clamp cycles.<br><strong style="color: var(--poke-red);">Uncorrectable:</strong> Permanent fiber fatigue with deep structural creases.</p>
+            </div>
+
+            <div class="sketch-card">
+                <div class="sketch-box">
+                    <span>Scratches & Surface Haze</span>
+                    <div class="ill-scratch"></div>
+                </div>
+                <strong style="font-size: 0.88rem; color: var(--text-main);">2. Gloss & Holo Scratches</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;"><strong>Correctable:</strong> 50%-80% smoothed using coat-safe micro-abrasive polymer pads.<br><strong style="color: var(--poke-red);">Uncorrectable:</strong> Deep gouges piercing foil layer or factory texture lines.</p>
+            </div>
+
+            <div class="sketch-card">
+                <div class="sketch-box">
+                    <span>Edge Chipping & Whitening</span>
+                    <div class="ill-whitening"></div>
+                </div>
+                <strong style="font-size: 0.88rem; color: var(--text-main);">3. Edges & Corner Whitening</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;"><strong>Correctable:</strong> 70%-90% lifted via micro-vapor hydration and precision stylus tooling.<br><strong style="color: var(--poke-red);">Uncorrectable:</strong> Complete loss of printed cardstock core or heavy paper fraying.</p>
+            </div>
+
+            <div class="sketch-card">
+                <div class="sketch-box">
+                    <span>Core Crease & Color Break</span>
+                    <div class="ill-crease"></div>
+                </div>
+                <strong style="font-size: 0.88rem; color: var(--text-main);">4. Deep Crease (Color Broken)</strong>
+                <p style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;"><strong>Correctable:</strong> 30%-50% mitigated via multi-stage hydration and high-pressure clamping.<br><strong style="color: var(--poke-red);">Uncorrectable:</strong> Inner paper core split is permanent; faint fracture remains visible.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <header>
+        <h1>TFL CARD LAB</h1>
+        <div class="tech-badge-group">
+            <span class="tech-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                OPERATOR: @TEDFLARSENJR
+            </span>
+            <span class="tech-badge">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                TECH ID: TFL21683
+            </span>
+        </div>
+        <p style="color: var(--text-muted); margin-top: 1rem; font-size: 0.98rem; text-align: center;">
+            Diagnostic Surface Correction, Structural Restoration & Vault Prep Portal
+        </p>
+    </header>
+
+    <form id="intakeForm" action="https://formspree.io/f/myegwlnz" method="POST">
+        
+        <div class="section-header" style="margin-top: 0;">
+            <span>1. Client Information</span>
+        </div>
+        <div class="grid">
+            <div class="form-group">
+                <label for="clientName">Full Name</label>
+                <input type="text" id="clientName" name="clientName" placeholder="Enter full legal name" required>
+            </div>
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" value="215-791-2829" placeholder="(XXX) XXX-XXXX" required>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" placeholder="name@example.com" required>
+        </div>
+
+        <div class="section-header">
+            <span>2. Item Intake & Comprehensive Multi-Defect Assessment</span>
+        </div>
+
+        <div id="cardsContainer"></div>
+
+        <button type="button" class="btn-add-card" onclick="addCardBlock()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Add Another Card To Ticket
+        </button>
+
+        <div class="form-group" style="background: rgba(56, 189, 248, 0.04); border: 1px solid var(--neon-blue); padding: 1.2rem; border-radius: 10px; margin-bottom: 1.8rem;">
+            <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; font-weight: normal; color: var(--text-main);">
+                <input type="checkbox" id="digitalImagesAvailable" name="digitalImagesAvailable" value="Yes" style="width: 20px; height: 20px; accent-color: var(--neon-blue); cursor: pointer;">
+                <span><strong>Digital Images Confirmation:</strong> I am able to send digital images of the defects / damage on the card(s) over once this submission form is completed.</span>
+            </label>
+        </div>
+
+        <div class="section-header">
+            <span>3. Protection Add-Ons & Shipping Logistics</span>
+        </div>
+        
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.2rem;">Select your required protection tiers. Each package clearly details its exact item inclusions below:</p>
+        
+        <div class="package-grid">
+            <div class="package-card">
+                <label>
+                    <span>TFL-01 Vault Prep</span>
+                    <input type="checkbox" name="pkg_tfl01" value="0.65" onchange="calculateFinancials()">
+                </label>
+                <span style="font-size: 0.82rem; color: var(--poke-gold); display: block; margin-bottom: 0.5rem; font-weight: 600;">$0.65 / card</span>
+                <ul>
+                    <li>✓ Inner Sleeve & Outer Sleeve (Double Sleeved)</li>
+                    <li>✓ Semi-Rigid Holder</li>
+                </ul>
+            </div>
+
+            <div class="package-card">
+                <label>
+                    <span>TFL-02 Showcase</span>
+                    <input type="checkbox" name="pkg_tfl02" value="3.50" onchange="calculateFinancials()">
+                </label>
+                <span style="font-size: 0.82rem; color: var(--poke-gold); display: block; margin-bottom: 0.5rem; font-weight: 600;">$3.50 / card</span>
+                <ul>
+                    <li>✓ Inner & Outer Double Sleeved</li>
+                    <li>✓ Top Loader Holder</li>
+                </ul>
+            </div>
+
+            <div class="package-card">
+                <label>
+                    <span>TCG-05 Acrylic Case</span>
+                    <input type="checkbox" name="pkg_tcg05" value="7.50" onchange="calculateFinancials()">
+                </label>
+                <span style="font-size: 0.82rem; color: var(--poke-gold); display: block; margin-bottom: 0.5rem; font-weight: 600;">$7.50 / card</span>
+                <ul>
+                    <li>✓ Inner & Outer Double Sleeved</li>
+                    <li>✓ Acrylic Case (Magnetic or Slide)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.8rem;">
+            <label for="shippingCarrier">Return Shipping Logistics & Protection (Origin: Croydon, PA 19021)</label>
+            <select id="shippingCarrier" name="shippingCarrier" required onchange="calculateFinancials()">
+                <option value="1.50">Economy Basic USPS Envelope Mail Back (No Liability / No Tracking) - $1.50 RT</option>
+                <option value="19.10">Standard Return / Low Tier (Shipped Back Between Ding Defenders w/ Tracking) - $19.10 RT</option>
+                <option value="26.50">Upgraded Protection Package / High Tier (Enhanced Reinforcement, Full Insurance & Receipt Confirmation) - $26.50 RT Est.</option>
+            </select>
+        </div>
+
+        <div class="financial-summary">
+            <h3 style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-size: 1.15rem; margin-bottom: 1.2rem; display: flex; align-items: center; gap: 0.6rem;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                ESTIMATED COST & FINANCIAL LIABILITY SUMMARY
+            </h3>
+            <div class="summary-row">
+                <span>Total Cards Submitted</span>
+                <span id="totalCardsCount">1</span>
+            </div>
+            <div class="summary-row">
+                <span>Evaluation / Intake Fees (100% Credited to Labor)</span>
+                <span id="evalFeeDisplay">$5.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Selected Service Tier Labor (Auto-Calculated)</span>
+                <span id="laborDisplay">$0.00</span>
+            </div>
+            <div class="summary-row" id="hourlyRow" style="display: none; color: var(--neon-blue);">
+                <span>High-Value Hourly Overtime Charges ($50/hr min 1 hr)</span>
+                <span id="hourlyDisplay">$0.00</span>
+            </div>
+            <div class="summary-row" id="photoOptionRow" style="display: none; color: var(--poke-gold);">
+                <span>High-Value Photo Documentation Add-on ($5.00 / card)</span>
+                <span id="photoOptionDisplay">$0.00</span>
+            </div>
+            <div class="summary-row" id="discountRow" style="display: none; color: var(--success-green);">
+                <span>Full Work-Over Discount (15% Applied)</span>
+                <span id="discountDisplay">-$0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Supplies & Protection Add-ons</span>
+                <span id="suppliesDisplay">$0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>High-Value Valuation Surcharges</span>
+                <span id="surchargeDisplay">$0.00</span>
+            </div>
+            <div class="summary-row">
+                <span>Return Logistics & Insurance</span>
+                <span id="shippingDisplay">$1.50</span>
+            </div>
+            <div class="summary-row total">
+                <span>ESTIMATED TOTAL OUT-OF-POCKET</span>
+                <span id="totalEstimateDisplay">$6.50</span>
+            </div>
+        </div>
+
+        <input type="hidden" id="hiddenTotalEstimate" name="hiddenTotalEstimate" value="6.50">
+        <input type="hidden" id="hiddenItemizedSummary" name="hiddenItemizedSummary" value="">
+
+        <div class="section-header">
+            <span>4. Master Legal Terms & Liability Waiver</span>
+        </div>
+        
+        <div class="legal-box">
+            <h4>BINDING LEGAL TERMS, RISK ASSUMPTION & WAIVER (REV 2026.1)</h4>
+            <p><strong>1. INHERENT REPAIR RISKS:</strong> Collectible cardstock, foils, and inks respond unpredictably to pressure, heat, and chemical intervention. Processing may result in fiber tearing, blistering, layer separation, or total failure.</p>
+            <p style="margin-top: 0.6rem;"><strong>2. COMPLETE LIABILITY WAIVER:</strong> The client voluntarily assumes all risks and releases TFL Card Lab, operator (@tedflarsenjr), and technicians from any claims regarding partial/total damage or altered condition.</p>
+            <p style="margin-top: 0.6rem;"><strong>3. NO GRADING GUARANTEES:</strong> TFL Card Lab makes zero guarantees regarding third-party grading outcomes (PSA, CGC, BGS, SGC). Processed items carry inherent risk of receiving "Altered" or "Evidence of Restoration" designations.</p>
+            <p style="margin-top: 0.6rem;"><strong>4. PENNSYLVANIA SAFE HARBOR LIABILITY CAP:</strong> Aggregate maximum financial liability for loss or damage is strictly capped at the lower of declared raw market value or the actual service labor fee paid.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="clientSignature">Digital Signature / Full Legal Name Authorization *</label>
+            <input type="text" id="clientSignature" name="clientSignature" placeholder="Type full legal name to sign & authorize" required>
+        </div>
+        
+        <div class="form-group" style="display: flex; align-items: center; gap: 0.9rem; margin-top: 1.2rem;">
+            <input type="checkbox" id="authCheck" name="authCheck" required style="width: 20px; height: 20px; accent-color: var(--poke-gold); cursor: pointer;">
+            <label for="authCheck" style="font-size: 0.88rem; font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                I certify that I have read, understood, and agree to all terms, disclaimers, risk assumptions, and liability waivers listed above.
+            </label>
+        </div>
+
+        <div class="form-group" style="margin-top: 1.8rem;">
+            <label for="notes">Special Instructions or Restoration Directives</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Specify high-priority defects, target grades, or specific restoration goals..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-submit">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+            Authorize Diagnostic & Submit Request
+        </button>
+    </form>
+</div>
+
+<script>
+    let cardCount = 0;
+
+    function toggleGuide(show) {
+        document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+    }
+
+    function addCardBlock() {
+        cardCount++;
+        const container = document.getElementById('cardsContainer');
+        const block = document.createElement('div');
+        block.className = 'card-entry-block';
+        block.id = `cardBlock_${cardCount}`;
+        
+        block.innerHTML = `
+            <div class="card-header-bar">
+                <span style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-weight: 700;">CARD ENTRY #${cardCount}</span>
+                ${cardCount > 1 ? `<button type="button" class="btn-remove-card" onclick="removeCardBlock(${cardCount})">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    Remove Card
+                </button>` : ''}
+            </div>
+
+            <div class="form-group">
+                <label>Live Database Lookup (Search Name, Set, or Number)</label>
+                <input type="text" class="card-search" placeholder="Type to query TCGPlayer API..." autocomplete="off">
+                <div class="search-results"></div>
+            </div>
+
+            <div class="card-preview-container">
+                <img class="preview-img" src="" alt="Card Preview">
+                <div style="flex: 1;">
+                    <h3 class="preview-title" style="color: var(--poke-gold); font-size: 1.1rem;">Selected Card</h3>
+                    <p class="preview-set" style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.3rem;"></p>
+                    <div style="margin-top: 0.8rem; display: flex; gap: 1.5rem; align-items: center;">
+                        <div>
+                            <span style="font-size: 0.75rem; color: var(--text-muted); display: block;">MARKET RAW PRICE ($)</span>
+                            <input type="number" step="0.01" class="manual-price-input" value="0.00" onchange="updateManualPrice(${cardCount})" style="width: 130px; padding: 0.4rem; font-weight: bold; color: var(--success-green); background: var(--bg-dark);">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" name="cardDetails_${cardCount}" class="hidden-details" value="Custom Card Submission">
+            <input type="hidden" name="declaredRawValue_${cardCount}" class="hidden-price" value="0">
+
+            <div class="grid" style="margin-top: 1.2rem;">
+                <div class="form-group">
+                    <label>Finish / Card Stock Type (Auto-Selected or Manual)</label>
+                    <select name="cardFinish_${cardCount}" class="card-finish-select" required>
+                        <option value="Vintage WOTC Gloss">Vintage WOTC Gloss</option>
+                        <option value="Modern Foil / SAR / Ultra">Modern Foil / SAR / Ultra</option>
+                        <option value="Japanese / Import Stock">Japanese / Import Stock</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Correction Service Tier (Auto-Assigned from Defects)</label>
+                    <input type="text" class="auto-tier-display" value="Tier 1 Basic ($15.00)" readonly style="background: var(--bg-dark); color: var(--poke-gold); font-family: 'Orbitron', sans-serif; font-weight: 700;">
+                    <input type="hidden" name="serviceTier_${cardCount}" class="hidden-tier-val" value="15">
+                </div>
+            </div>
+
+            <div class="high-value-options-container form-group" style="display: none; background: rgba(251, 191, 36, 0.04); border: 1px dashed var(--poke-gold); padding: 1rem; border-radius: 8px;">
+                <label style="color: var(--poke-gold); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; margin-bottom: 0.8rem;">High-Value Card ($200+) Add-ons & Overtime</label>
+                
+                <div style="display: flex; flex-direction: column; gap: 0.8rem;">
+                    <label style="display: flex; align-items: center; gap: 0.8rem; font-weight: normal; font-size: 0.9rem; cursor: pointer; color: var(--text-main);">
+                        <input type="checkbox" class="photo-option-checkbox" name="cardPhotoOption_${cardCount}" value="Yes" onchange="calculateFinancials()" style="width: 18px; height: 18px; accent-color: var(--poke-gold); cursor: pointer;">
+                        <span><strong>High-Value Photo Documentation Package:</strong> Include detailed pre- and post-restoration macro shots of defect zones ($5.00)</span>
+                    </label>
+
+                    <div class="hourly-subcontainer" style="display: none; margin-top: 0.4rem; border-top: 1px solid var(--border-color); padding-top: 0.8rem;">
+                        <label style="color: var(--neon-blue); font-size: 0.85rem; margin-bottom: 0.4rem;">Overtime Hours ($50/hr • 1 Hr Min) [Value $350+]</label>
+                        <div style="display: flex; gap: 1rem; align-items: center;">
+                            <input type="number" class="hourly-input" name="cardHours_${cardCount}" value="1" min="1" step="0.5" onchange="calculateFinancials()" style="width: 120px;">
+                            <span style="font-size: 0.8rem; color: var(--text-muted);">Card value exceeds $350 threshold. Minimum 1 hour specialized labor required.</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <table class="matrix-table">
+                <thead>
+                    <tr>
+                        <th style="width: 35%;">Inspection Zone</th>
+                        <th>
+                            Comprehensive Multi-Defect Assessment 
+                            <span class="guide-link" onclick="toggleGuide(true)">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                                [View Visual Blueprints]
+                            </span>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Front Surface & Holo</strong></td>
+                        <td>
+                            <div class="defect-checkbox-group">
+                                <label><input type="checkbox" name="front_${cardCount}" value="Foil Bowing" onchange="calculateFinancials()"> Foil Bowing / Reverse Curve</label>
+                                <label><input type="checkbox" name="front_${cardCount}" value="Surface Oils/Dirt" onchange="calculateFinancials()"> Fingerprints, Haze & Wax Film</label>
+                                <label><input type="checkbox" name="front_${cardCount}" value="Micro Scratches" onchange="calculateFinancials()"> Gloss / Holo Hairline Scratches</label>
+                                <label><input type="checkbox" name="front_${cardCount}" value="Roller Lines" onchange="calculateFinancials()"> Factory Print / Roller Pressure Lines</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Edges & Corners</strong></td>
+                        <td>
+                            <div class="defect-checkbox-group">
+                                <label><input type="checkbox" name="edge_${cardCount}" value="Edge Whitening" onchange="calculateFinancials()"> Edge Whitening & Chipping</label>
+                                <label><input type="checkbox" name="edge_${cardCount}" value="Side Indents" onchange="calculateFinancials()"> Binder Dings & Pack Crimps</label>
+                                <label><input type="checkbox" name="edge_${cardCount}" value="Corner Softness" onchange="calculateFinancials()"> Corner Softness / Layer Splitting</label>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Back Surface & Core</strong></td>
+                        <td>
+                            <div class="defect-checkbox-group">
+                                <label><input type="checkbox" name="back_${cardCount}" value="Back Scratches" onchange="calculateFinancials()"> Back Scratches & Print Dots</label>
+                                <label><input type="checkbox" name="back_${cardCount}" value="Surface Wrinkle" onchange="calculateFinancials()"> Surface Wrinkle (No Color Break)</label>
+                                <label><input type="checkbox" name="back_${cardCount}" value="Deep Crease" onchange="calculateFinancials()"> Deep Crease (Color / Core Broken)</label>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        `;
+
+        container.appendChild(block);
+        setupSearchListeners(block);
+        calculateFinancials();
+    }
+
+    function removeCardBlock(id) {
+        const block = document.getElementById(`cardBlock_${id}`);
+        if (block) {
+            block.remove();
+            calculateFinancials();
+        }
+    }
+
+    function updateManualPrice(id) {
+        const block = document.getElementById(`cardBlock_${id}`);
+        const manualInput = block.querySelector('.manual-price-input');
+        const hiddenPrice = block.querySelector('.hidden-price');
+        hiddenPrice.value = parseFloat(manualInput.value) || 0;
+        calculateFinancials();
+    }
+
+    function setupSearchListeners(block) {
+        const input = block.querySelector('.card-search');
+        const results = block.querySelector('.search-results');
+        const preview = block.querySelector('.card-preview-container');
+        let debounce;
+
+        input.addEventListener('input', function() {
+            clearTimeout(debounce);
+            const query = this.value.trim();
+            if (query.length < 2) { results.style.display = 'none'; return; }
+
+            debounce = setTimeout(() => {
+                const terms = query.split(/\s+/);
+                let qString = terms.map(t => `name:${t}* OR set.name:${t}* OR number:${t}`).join(' AND ');
+
+                fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(qString)}&pageSize=8`)
+                    .then(res => res.json())
+                    .then(data => {
+                        results.innerHTML = '';
+                        if (data.data && data.data.length > 0) {
+                            data.data.forEach(card => {
+                                const item = document.createElement('div');
+                                item.className = 'search-item';
+                                
+                                let price = 0;
+                                if (card.tcgplayer && card.tcgplayer.prices) {
+                                    const pObj = card.tcgplayer.prices;
+                                    const variant = pObj.holofoil || pObj.normal || pObj.reverseHolofoil || pObj['1stEditionHolofoil'] || Object.values(pObj)[0];
+                                    if (variant && variant.market) price = variant.market;
+                                }
+
+                                item.innerHTML = `
+                                    <img src="${card.images.small}" alt="${card.name}">
+                                    <div>
+                                        <strong>${card.name}</strong> (${card.set.name} - #${card.number})<br>
+                                        <small style="color: #94a3b8;">Est. Raw Market: $${price.toFixed(2)}</small>
+                                    </div>
+                                `;
+
+                                item.addEventListener('click', () => {
+                                    input.value = `${card.name} (${card.set.name} #${card.number})`;
+                                    block.querySelector('.preview-img').src = card.images.small;
+                                    block.querySelector('.preview-title').textContent = card.name;
+                                    block.querySelector('.preview-set').textContent = `Set: ${card.set.name} | #${card.number}`;
+                                    
+                                    block.querySelector('.manual-price-input').value = price.toFixed(2);
+                                    block.querySelector('.hidden-price').value = price;
+                                    block.querySelector('.hidden-details').value = `${card.name} - ${card.set.name} (#${card.number})`;
+
+                                    const finishSelect = block.querySelector('.card-finish-select');
+                                    const cardNameLower = card.name.toLowerCase();
+                                    const rarityLower = (card.rarity || '').toLowerCase();
+                                    const setNameLower = card.set.name.toLowerCase();
+
+                                    if (cardNameLower.includes('mega') || rarityLower.includes('rare') || rarityLower.includes('ultra') || rarityLower.includes('secret') || rarityLower.includes('illustration') || card.supertype === 'Pokémon') {
+                                        finishSelect.value = "Modern Foil / SAR / Ultra";
+                                    } else if (setNameLower.includes('japan') || cardNameLower.includes('jp')) {
+                                        finishSelect.value = "Japanese / Import Stock";
+                                    } else {
+                                        finishSelect.value = "Vintage WOTC Gloss";
+                                    }
+
+                                    preview.style.display = 'flex';
+                                    results.style.display = 'none';
+                                    calculateFinancials();
+                                });
+
+                                results.appendChild(item);
+                            });
+                            results.style.display = 'block';
+                        } else {
+                            results.innerHTML = `<div style="padding: 12px; color: var(--text-muted); text-align: center;">No cards found matching "${query}"</div>`;
+                            results.style.display = 'block';
+                        }
+                    })
+                    .catch(err => {
+                        console.error('API Error:', err);
+                    });
+            }, 300);
+        });
+    }
+
+    function calculateFinancials() {
+        const cardBlocks = document.querySelectorAll('.card-entry-block');
+        const count = cardBlocks.length;
+        document.getElementById('totalCardsCount').textContent = count;
+
+        let totalLabor = 0;
+        let totalHourlyCharges = 0;
+        let totalPhotoOptionCharges = 0;
+        let totalSurcharges = 0;
+        let allDefectsSelected = true;
+        let hasHourlyActive = false;
+        let hasPhotoOptionActive = false;
+
+        cardBlocks.forEach(block => {
+            const price = parseFloat(block.querySelector('.hidden-price').value) || 0;
+            const checkedBoxes = block.querySelectorAll('input[type="checkbox"]:checked').length;
+            
+            let baseTierPrice = 15;
+            let tierName = "Tier 1 Basic";
+
+            const hasDeepCrease = Array.from(block.querySelectorAll('input[type="checkbox"]:checked')).some(cb => cb.value === "Deep Crease");
+            
+            if (hasDeepCrease || checkedBoxes >= 5) {
+                baseTierPrice = 80;
+                tierName = "Tier 3 Heavy ($80)";
+            } else if (checkedBoxes >= 3) {
+                baseTierPrice = 35;
+                tierName = "Tier 2 Moderate ($35)";
+            } else {
+                baseTierPrice = 15;
+                tierName = "Tier 1 Basic ($15)";
+            }
+
+            block.querySelector('.auto-tier-display').value = `${tierName}`;
+            block.querySelector('.hidden-tier-val').value = baseTierPrice;
+            totalLabor += baseTierPrice;
+
+            const highValueContainer = block.querySelector('.high-value-options-container');
+            const hourlySubcontainer = block.querySelector('.hourly-subcontainer');
+            const photoCheckbox = block.querySelector('.photo-option-checkbox');
+
+            if (price >= 200) {
+                highValueContainer.style.display = 'block';
+                
+                // Photo option is available for all cards $200+
+                if (photoCheckbox.checked) {
+                    totalPhotoOptionCharges += 5.00;
+                    hasPhotoOptionActive = true;
+                }
+
+                // Hourly overtime applies if $350+
+                if (price >= 350) {
+                    hourlySubcontainer.style.display = 'block';
+                    hasHourlyActive = true;
+                    const hoursInput = block.querySelector('.hourly-input');
+                    let hours = parseFloat(hoursInput.value) || 1;
+                    if (hours < 1) {
+                        hours = 1;
+                        hoursInput.value = 1;
+                    }
+                    totalHourlyCharges += (hours * 50);
+                } else {
+                    hourlySubcontainer.style.display = 'none';
+                }
+            } else {
+                highValueContainer.style.display = 'none';
+                photoCheckbox.checked = false;
+            }
+
+            if (price >= 1000) totalSurcharges += (price * 0.025);
+            else if (price >= 200) totalSurcharges += (price * 0.0175);
+
+            const allCheckboxes = block.querySelectorAll('input[type="checkbox"]');
+            allCheckboxes.forEach(cb => {
+                if (!cb.checked) allDefectsSelected = false;
+            });
+        });
+
+        const hourlyRow = document.getElementById('hourlyRow');
+        if (hasHourlyActive) {
+            hourlyRow.style.display = 'flex';
+            document.getElementById('hourlyDisplay').textContent = `$${totalHourlyCharges.toFixed(2)}`;
+        } else {
+            hourlyRow.style.display = 'none';
+        }
+
+        const photoOptionRow = document.getElementById('photoOptionRow');
+        if (hasPhotoOptionActive) {
+            photoOptionRow.style.display = 'flex';
+            document.getElementById('photoOptionDisplay').textContent = `$${totalPhotoOptionCharges.toFixed(2)}`;
+        } else {
+            photoOptionRow.style.display = 'none';
+        }
+
+        let perCardSupply = 0;
+        if (document.querySelector('input[name="pkg_tfl01"]').checked) perCardSupply += 0.65;
+        if (document.querySelector('input[name="pkg_tfl02"]').checked) perCardSupply += 3.50;
+        if (document.querySelector('input[name="pkg_tcg05"]').checked) perCardSupply += 7.50;
+
+        const totalSupplies = perCardSupply * count;
+        const shipping = parseFloat(document.getElementById('shippingCarrier').value) || 1.50;
+        const evalFee = 5.00 * count;
+
+        let discountAmount = 0;
+        const discountRow = document.getElementById('discountRow');
+        if (allDefectsSelected && cardBlocks.length > 0) {
+            discountAmount = totalLabor * 0.15;
+            discountRow.style.display = 'flex';
+            document.getElementById('discountDisplay').textContent = `-$${discountAmount.toFixed(2)}`;
+        } else {
+            discountRow.style.display = 'none';
+        }
+
+        const netLabor = totalLabor - discountAmount;
+
+        document.getElementById('evalFeeDisplay').textContent = `$${evalFee.toFixed(2)}`;
+        document.getElementById('laborDisplay').textContent = `$${totalLabor.toFixed(2)}`;
+        document.getElementById('suppliesDisplay').textContent = `$${totalSupplies.toFixed(2)}`;
+        document.getElementById('surchargeDisplay').textContent = `$${totalSurcharges.toFixed(2)}`;
+        document.getElementById('shippingDisplay').textContent = `$${shipping.toFixed(2)}`;
+
+        const grandTotal = netLabor + totalHourlyCharges + totalPhotoOptionCharges + totalSupplies + totalSurcharges + shipping;
+        document.getElementById('totalEstimateDisplay').textContent = `$${grandTotal.toFixed(2)}`;
+        
+        document.getElementById('hiddenTotalEstimate').value = grandTotal.toFixed(2);
+        document.getElementById('hiddenItemizedSummary').value = `Cards: ${count}, Labor: $${totalLabor.toFixed(2)}, Hourly: $${totalHourlyCharges.toFixed(2)}, Photos: $${totalPhotoOptionCharges.toFixed(2)}, Supplies: $${totalSupplies.toFixed(2)}, Shipping: $${shipping.toFixed(2)}`;
+    }
+
+    window.onload = () => addCardBlock();
+</script>
+
+</body>
+</html>
