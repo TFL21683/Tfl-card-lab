@@ -1,0 +1,1267 @@
+<!DOCTYPE html> 
+<html lang="en"> 
+<head> 
+<meta charset="UTF-8"> 
+<meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+<title>TFL Card Lab - Comprehensive Master Intake Portal</title> 
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+<style> 
+:root { 
+    --bg-dark: #04060f; 
+    --card-bg: #0b1329; 
+    --card-inner: #131e38; 
+    --border-color: #1e293b; 
+    --neon-blue: #38bdf8; 
+    --glow-blue: rgba(56, 189, 248, 0.2); 
+    --poke-red: #f43f5e; 
+    --poke-gold: #fbbf24; 
+    --glow-gold: rgba(251, 191, 36, 0.2); 
+    --text-main: #f8fafc; 
+    --text-muted: #94a3b8; 
+    --success-green: #10b981; 
+} 
+
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+} 
+
+body { 
+    font-family: 'Inter', sans-serif; 
+    background: radial-gradient(circle at 50% 0%, #17153b 0%, var(--bg-dark) 70%); 
+    color: var(--text-main); 
+    padding: 2.5rem 1rem; 
+    display: flex; 
+    justify-content: center; 
+    min-height: 100vh; 
+    position: relative; 
+    overflow-x: hidden; 
+    line-height: 1.5; 
+} 
+
+body::before { 
+    content: ""; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    height: 600px; 
+    background: radial-gradient(circle at 50% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 65%); 
+    z-index: 0; 
+    pointer-events: none; 
+} 
+
+.container { 
+    max-width: 1140px; 
+    width: 100%; 
+    background-color: var(--card-bg); 
+    border: 1px solid var(--border-color); 
+    border-radius: 20px; 
+    padding: 2.5rem 3rem; 
+    box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 40px rgba(56, 189, 248, 0.1); 
+    position: relative; 
+    z-index: 1; 
+} 
+
+header { 
+    text-align: center; 
+    border-bottom: 2px solid var(--border-color); 
+    padding-bottom: 1.8rem; 
+    margin-bottom: 2rem; 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+} 
+
+h1 { 
+    font-family: 'Orbitron', sans-serif; 
+    color: var(--poke-gold); 
+    font-size: clamp(2.2rem, 5vw, 3rem); 
+    font-weight: 900; 
+    letter-spacing: 3px; 
+    text-transform: uppercase; 
+    text-shadow: 0 0 25px var(--glow-gold); 
+} 
+
+.tech-badge-group { 
+    display: flex; 
+    justify-content: center; 
+    gap: 1rem; 
+    flex-wrap: wrap; 
+    margin-top: 0.8rem; 
+} 
+
+.tech-badge { 
+    display: inline-flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+    background: rgba(56, 189, 248, 0.06); 
+    border: 1px solid var(--neon-blue); 
+    color: var(--neon-blue); 
+    padding: 0.4rem 1.1rem; 
+    border-radius: 20px; 
+    font-size: 0.8rem; 
+    font-family: 'Orbitron', sans-serif; 
+    box-shadow: 0 0 12px var(--glow-blue); 
+    letter-spacing: 0.5px; 
+} 
+
+.portal-section { 
+    background-color: var(--card-inner); 
+    border: 1px solid var(--border-color); 
+    border-radius: 14px; 
+    margin-bottom: 1.5rem; 
+    overflow: hidden; 
+    transition: border-color 0.3s ease, background-color 0.3s ease; 
+} 
+
+.portal-section:hover { 
+    border-color: rgba(56, 189, 248, 0.4); 
+} 
+
+.portal-section.completed { 
+    border-color: var(--success-green); 
+    background-color: rgba(16, 185, 129, 0.02); 
+} 
+
+.portal-section.completed .portal-section-header { 
+    border-bottom-color: var(--success-green); 
+    color: var(--success-green); 
+    text-shadow: 0 0 10px rgba(16, 185, 129, 0.3); 
+} 
+
+.portal-section-header { 
+    font-family: 'Orbitron', sans-serif; 
+    color: var(--poke-red); 
+    font-size: 1.05rem; 
+    padding: 1.2rem 1.5rem; 
+    background: rgba(4, 6, 15, 0.4); 
+    border-bottom: 1px solid var(--border-color); 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    cursor: pointer; 
+    user-select: none; 
+    text-shadow: 0 0 10px rgba(244, 63, 94, 0.3); 
+    letter-spacing: 1px; 
+    gap: 1rem; 
+    transition: color 0.3s ease, border-color 0.3s ease; 
+} 
+
+.portal-section-header > span:first-child { 
+    display: flex; 
+    align-items: center; 
+    gap: 0.8rem; 
+    flex: 1; 
+    min-width: 0; 
+} 
+
+.section-toggle-icon { 
+    font-size: 0.8rem; 
+    color: var(--poke-gold); 
+    transition: transform 0.3s ease; 
+    flex-shrink: 0; 
+} 
+
+.portal-section-content { 
+    padding: 1.8rem; 
+    max-height: 20000px; 
+    overflow: hidden; 
+    transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease; 
+    opacity: 1; 
+} 
+
+.portal-section.collapsed .portal-section-content { 
+    max-height: 0; 
+    padding-top: 0; 
+    padding-bottom: 0; 
+    opacity: 0; 
+    pointer-events: none; 
+} 
+
+.portal-section.collapsed .section-toggle-icon { 
+    transform: rotate(180deg); 
+} 
+
+.card-entry-block { 
+    background-color: var(--bg-dark); 
+    border: 1px solid var(--border-color); 
+    border-radius: 12px; 
+    padding: 1.6rem; 
+    margin-bottom: 1.5rem; 
+    position: relative; 
+    transition: all 0.3s ease; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4); 
+} 
+
+.card-entry-block:hover { 
+    border-color: var(--neon-blue); 
+    box-shadow: 0 12px 35px rgba(56, 189, 248, 0.12); 
+} 
+
+.card-entry-block.completed { 
+    border-color: var(--success-green); 
+} 
+
+.card-header-bar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 1.2rem; 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 0.8rem; 
+    cursor: pointer; 
+    user-select: none; 
+    gap: 1rem; 
+} 
+
+.btn-remove-card { 
+    background: rgba(244, 63, 94, 0.12); 
+    color: var(--poke-red); 
+    border: 1px solid var(--poke-red); 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 8px; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: all 0.2s; 
+    flex-shrink: 0; 
+} 
+
+.btn-remove-card:hover { 
+    background: var(--poke-red); 
+    color: white; 
+    box-shadow: 0 0 12px rgba(244, 63, 94, 0.5); 
+} 
+
+.form-group { 
+    margin-bottom: 1.2rem; 
+    position: relative; 
+} 
+
+label { 
+    display: flex; 
+    justify-content: space-between; 
+    font-weight: 600; 
+    margin-bottom: 0.4rem; 
+    color: var(--text-main); 
+    font-size: 0.88rem; 
+} 
+
+input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea { 
+    width: 100%; 
+    padding: 0.8rem 1rem; 
+    background-color: var(--bg-dark); 
+    border: 1px solid var(--border-color); 
+    border-radius: 9px; 
+    color: var(--text-main); 
+    font-size: 0.92rem; 
+    transition: all 0.2s; 
+    font-family: 'Inter', sans-serif; 
+} 
+
+input:focus, select:focus, textarea:focus { 
+    outline: none; 
+    border-color: var(--poke-gold); 
+    box-shadow: 0 0 12px var(--glow-gold); 
+} 
+
+/* Search API & Results Styles */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--card-bg);
+    border: 1px solid var(--neon-blue);
+    border-radius: 0 0 10px 10px;
+    max-height: 240px;
+    overflow-y: auto;
+    z-index: 100;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.8);
+    display: none;
+}
+
+.search-result-item {
+    padding: 0.7rem 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    cursor: pointer;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.search-result-item:hover {
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.search-result-item img {
+    width: 32px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* Defects Grid Styles */
+.defects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 0.8rem;
+    margin-top: 0.6rem;
+    background: var(--bg-dark);
+    border: 1px solid var(--border-color);
+    padding: 1rem;
+    border-radius: 10px;
+}
+
+.defect-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: normal;
+    color: var(--text-muted);
+    cursor: pointer;
+}
+
+.defect-checkbox-label input[type="checkbox"] {
+    accent-color: var(--poke-gold);
+    width: 16px;
+    height: 16px;
+}
+
+.btn-add-card { 
+    width: 100%; 
+    background: rgba(56, 189, 248, 0.04); 
+    border: 2px dashed var(--neon-blue); 
+    color: var(--neon-blue); 
+    font-family: 'Orbitron', sans-serif; 
+    font-weight: 700; 
+    padding: 1rem; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    transition: all 0.3s; 
+    margin-bottom: 1rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.6rem; 
+} 
+
+.btn-add-card:hover { 
+    background: rgba(56, 189, 248, 0.12); 
+    box-shadow: 0 0 20px var(--glow-blue); 
+    border-color: var(--poke-gold); 
+    color: var(--poke-gold); 
+} 
+
+.package-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 1rem; 
+    margin-top: 1rem; 
+} 
+
+.package-card { 
+    background: var(--bg-dark); 
+    border: 1px solid var(--border-color); 
+    border-radius: 10px; 
+    padding: 1.2rem; 
+    transition: all 0.3s; 
+    cursor: pointer; 
+    position: relative;
+} 
+
+.package-card:hover { 
+    border-color: var(--poke-gold); 
+    box-shadow: 0 5px 20px rgba(251, 191, 36, 0.12); 
+} 
+
+.package-card input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.package-card.selected {
+    border-color: var(--poke-gold);
+    background: rgba(251, 191, 36, 0.05);
+    box-shadow: 0 0 15px var(--glow-gold);
+}
+
+.package-card label { 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 0.85rem; 
+    color: var(--poke-gold); 
+    margin-bottom: 0.5rem; 
+    display: flex; 
+    align-items: center; 
+    justify-content: space-between; 
+    cursor: pointer; 
+} 
+
+.package-card ul { 
+    list-style: none; 
+    font-size: 0.8rem; 
+    color: var(--text-muted); 
+    padding-left: 0; 
+    margin-top: 0.5rem; 
+} 
+
+.package-card li { 
+    margin-bottom: 0.3rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 0.5rem; 
+} 
+
+.legal-box { 
+    background: var(--bg-dark); 
+    border: 1px solid var(--border-color); 
+    padding: 1.5rem; 
+    border-radius: 10px; 
+    max-height: 200px; 
+    overflow-y: auto; 
+    font-size: 0.8rem; 
+    color: var(--text-muted); 
+    line-height: 1.6; 
+    margin-bottom: 1.2rem; 
+} 
+
+.financial-summary { 
+    background: var(--card-inner); 
+    border: 2px solid var(--poke-gold); 
+    padding: 1.5rem; 
+    border-radius: 14px; 
+    margin-top: 2rem; 
+    position: sticky; 
+    bottom: 1rem; 
+    z-index: 50; 
+    box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px var(--glow-gold); 
+    backdrop-filter: blur(12px); 
+    transition: all 0.3s ease;
+} 
+
+.financial-summary-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    cursor: pointer; 
+    user-select: none; 
+} 
+
+.summary-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 0.6rem 0; 
+    border-bottom: 1px solid var(--border-color); 
+    font-size: 0.95rem; 
+    align-items: center; 
+} 
+
+.pricing-row { 
+    margin-bottom: 0.6rem; 
+    border-bottom: 1px solid var(--border-color); 
+    padding-bottom: 0.6rem; 
+} 
+
+.item-main { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 0.5rem; 
+} 
+
+.grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 1.2rem; 
+} 
+
+.btn-submit { 
+    width: 100%; 
+    background: linear-gradient(135deg, var(--poke-red) 0%, #9f1239 100%); 
+    color: white; 
+    font-family: 'Orbitron', sans-serif; 
+    font-weight: 900; 
+    font-size: 1.15rem; 
+    padding: 1.2rem; 
+    border: none; 
+    border-radius: 10px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    margin-top: 1.5rem; 
+    letter-spacing: 2px; 
+    box-shadow: 0 6px 25px rgba(244, 63, 94, 0.4); 
+    transition: all 0.2s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.8rem; 
+} 
+
+.btn-submit:hover { 
+    transform: translateY(-2px); 
+    box-shadow: 0 10px 30px rgba(244, 63, 94, 0.6); 
+} 
+
+.btn-invoice-action { 
+    width: 100%; 
+    margin-top: 1rem; 
+    background: rgba(56, 189, 248, 0.1); 
+    border: 1px solid var(--neon-blue); 
+    color: var(--neon-blue); 
+    font-family: 'Orbitron', sans-serif; 
+    font-weight: 700; 
+    font-size: 0.88rem; 
+    padding: 0.9rem; 
+    border-radius: 9px; 
+    cursor: pointer; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 0.6rem; 
+    transition: all 0.2s ease; 
+} 
+
+.btn-invoice-action:hover { 
+    background: var(--neon-blue); 
+    color: var(--bg-dark); 
+    box-shadow: 0 0 15px var(--glow-blue); 
+} 
+
+/* Modal Overlays */
+.modal-overlay { 
+    position: fixed; 
+    top: 0; 
+    left: 0; 
+    right: 0; 
+    bottom: 0; 
+    background: rgba(4, 6, 15, 0.92); 
+    display: none; 
+    justify-content: center; 
+    align-items: center; 
+    z-index: 1000; 
+    padding: 1rem; 
+    backdrop-filter: blur(6px); 
+} 
+
+.modal-content { 
+    background: var(--card-bg); 
+    border: 2px solid var(--poke-gold); 
+    border-radius: 16px; 
+    max-width: 860px; 
+    width: 100%; 
+    padding: 2.2rem; 
+    box-shadow: 0 0 50px var(--glow-gold); 
+    position: relative; 
+    max-height: 90vh; 
+    overflow-y: auto; 
+} 
+
+.modal-close { 
+    position: absolute; 
+    top: 1.2rem; 
+    right: 1.2rem; 
+    background: var(--poke-red); 
+    color: white; 
+    border: none; 
+    width: 32px; 
+    height: 32px; 
+    border-radius: 50%; 
+    font-weight: bold; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    transition: transform 0.2s; 
+} 
+
+.invoice-sheet { 
+    background: #ffffff; 
+    color: #0f172a; 
+    border-radius: 12px; 
+    padding: 2.5rem; 
+    font-family: 'Inter', sans-serif; 
+    position: relative; 
+    box-shadow: 0 0 40px rgba(0,0,0,0.5); 
+    max-width: 780px; 
+    margin: 0 auto; 
+} 
+
+.invoice-watermark { 
+    position: absolute; 
+    top: 50%; 
+    left: 50%; 
+    transform: translate(-50%, -50%) rotate(-25deg); 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 5rem; 
+    font-weight: 900; 
+    color: rgba(244, 63, 94, 0.12); 
+    letter-spacing: 8px; 
+    pointer-events: none; 
+    z-index: 1; 
+    white-space: nowrap; 
+    border: 8px dashed rgba(244, 63, 94, 0.15); 
+    padding: 0.5rem 2rem; 
+    border-radius: 12px; 
+} 
+
+.invoice-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    border-bottom: 2px solid #cbd5e1; 
+    padding-bottom: 1.2rem; 
+    margin-bottom: 1.5rem; 
+    position: relative; 
+    z-index: 2; 
+} 
+
+.invoice-table { 
+    width: 100%; 
+    border-collapse: collapse; 
+    margin-bottom: 1.5rem; 
+    position: relative; 
+    z-index: 2; 
+} 
+
+.invoice-table th, .invoice-table td { 
+    padding: 0.75rem 1rem; 
+    text-align: left; 
+    border-bottom: 1px solid #e2e8f0; 
+    font-size: 0.88rem; 
+} 
+
+.invoice-table th { 
+    font-family: 'Orbitron', sans-serif; 
+    font-size: 0.78rem; 
+    color: #475569; 
+    background: #f1f5f9; 
+} 
+
+.invoice-totals { 
+    margin-left: auto; 
+    width: 320px; 
+    position: relative; 
+    z-index: 2; 
+} 
+
+.invoice-total-row { 
+    display: flex; 
+    justify-content: space-between; 
+    padding: 0.5rem 0; 
+    border-bottom: 1px solid #e2e8f0; 
+    font-size: 0.9rem; 
+} 
+
+.invoice-total-row.grand { 
+    font-family: 'Orbitron', sans-serif; 
+    font-weight: 900; 
+    font-size: 1.1rem; 
+    color: #0f172a; 
+    border-bottom: 2px solid #0f172a; 
+    border-top: 1px solid #0f172a; 
+    margin-top: 0.5rem; 
+    padding: 0.7rem 0; 
+} 
+
+/* Responsive Adjustments for Mobile */
+@media (max-width: 768px) {
+    .financial-summary {
+        position: relative;
+        bottom: auto;
+        margin-top: 1.5rem;
+        z-index: 10;
+    }
+    
+    .invoice-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    .modal-content {
+        padding: 1.5rem 1rem;
+    }
+}
+
+@media print { 
+    body * { 
+        visibility: hidden; 
+    } 
+    #invoiceModal, #invoiceModal * { 
+        visibility: visible; 
+    } 
+    #invoiceModal { 
+        position: absolute; 
+        left: 0; 
+        top: 0; 
+        width: 100%; 
+        height: auto !important; 
+        background: white; 
+        display: block !important; 
+        padding: 0; 
+    } 
+    .invoice-sheet { 
+        box-shadow: none; 
+        width: 100%; 
+        max-width: 100%; 
+        padding: 0.5rem; 
+        margin: 0; 
+    } 
+    .modal-close, .no-print { 
+        display: none !important; 
+    } 
+} 
+</style> 
+</head> 
+<body> 
+
+<!-- Printable Not Paid Invoice Modal --> 
+<div id="invoiceModal" class="modal-overlay"> 
+    <div class="modal-content" style="max-width: 820px; padding: 2rem; background: var(--bg-dark);"> 
+        <div class="no-print" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;"> 
+            <span style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-size: 0.95rem;">Printable Invoice Preview (Multi-Page Supported)</span> 
+            <div style="display: flex; gap: 0.8rem;"> 
+                <button type="button" class="btn-invoice-action" style="margin-top: 0; width: auto; padding: 0.5rem 1rem;" onclick="window.print()">🖨️ Print Invoice</button> 
+                <button class="modal-close" style="position: relative; top: 0; right: 0;" onclick="closeInvoiceModal()">✕</button> 
+            </div> 
+        </div> 
+        <div class="invoice-sheet" id="invoiceSheetContent"> 
+            <div class="invoice-watermark">NOT PAID</div> 
+            <div class="invoice-header"> 
+                <div> 
+                    <h2 style="font-family: 'Orbitron', sans-serif; color: #0f172a; font-size: 1.6rem; font-weight: 900; letter-spacing: 1px;">TFL CARD LAB</h2> 
+                    <p style="font-size: 0.8rem; color: #475569; margin-top: 2px;">Diagnostic Surface Correction & Restoration Services</p> 
+                </div> 
+                <div style="text-align: right;"> 
+                    <h3 style="font-family: 'Orbitron', sans-serif; color: #f43f5e; font-size: 1.1rem; font-weight: 700;">SAMPLE INVOICE</h3> 
+                    <p style="font-size: 0.8rem; color: #475569; margin-top: 2px;">Status: <strong style="color: #f43f5e;">NOT PAID</strong></p> 
+                    <p style="font-size: 0.75rem; color: #64748b;" id="invoiceDateDisplay">Date: Pending...</p> 
+                </div> 
+            </div> 
+            
+            <span style="font-family: 'Orbitron', sans-serif; font-size: 0.78rem; font-weight: 700; color: #475569; display: block; margin-bottom: 6px;">ITEMIZED CARD ASSETS & RESTORATION TIERS:</span> 
+            <table class="invoice-table"> 
+                <thead> 
+                    <tr> 
+                        <th>#</th> 
+                        <th>Card Description</th> 
+                        <th>Defects / Service Tier</th> 
+                    </tr> 
+                </thead> 
+                <tbody id="invoiceCardsTableBody"> 
+                    <!-- Dynamically populated via JS -->
+                </tbody> 
+            </table> 
+            <div class="invoice-totals"> 
+                <div class="invoice-total-row"> 
+                    <span>Evaluation Fees ($5 / card):</span> 
+                    <span id="invEvalFee">$0.00</span> 
+                </div> 
+                <div class="invoice-total-row"> 
+                    <span>Restoration Labor:</span> 
+                    <span id="invLaborTotal">$0.00</span> 
+                </div> 
+                <div class="invoice-total-row"> 
+                    <span>Protection Add-ons & Supplies:</span> 
+                    <span id="invSuppliesTotal">$0.00</span> 
+                </div> 
+                <div class="invoice-total-row"> 
+                    <span>Return Shipping Logistics:</span> 
+                    <span id="invShippingTotal">$0.00</span> 
+                </div> 
+                <div class="invoice-total-row grand"> 
+                    <span>ESTIMATED TOTAL DUE:</span> 
+                    <span id="invGrandTotal">$0.00</span> 
+                </div> 
+            </div> 
+        </div> 
+    </div> 
+</div> 
+
+<div class="container"> 
+    <header> 
+        <h1>TFL CARD LAB</h1> 
+        <div class="tech-badge-group"> 
+            <span class="tech-badge"> 
+                OPERATOR: @tedflarsenjr 
+            </span> 
+            <span class="tech-badge"> 
+                TECH ID: TFL21683 
+            </span> 
+        </div> 
+        <p style="color: var(--text-muted); margin-top: 0.8rem; font-size: 0.9rem; text-align: center;"> Diagnostic Surface Correction, Structural Restoration & Vault Prep Portal </p> 
+    </header> 
+    
+    <form id="intakeForm"> 
+        <!-- Section 1: Client Information --> 
+        <div class="portal-section" id="sectionClient"> 
+            <div class="portal-section-header" onclick="togglePortalSection(this)"> 
+                <span>1. Client Information</span> 
+                <span class="section-toggle-icon">▲</span> 
+            </div> 
+            <div class="portal-section-content"> 
+                <div class="grid"> 
+                    <div class="form-group"> 
+                        <label for="clientName">Full Name</label> 
+                        <input type="text" id="clientName" name="clientName" placeholder="Full Name" required oninput="updateSectionCompletionStatus()"> 
+                    </div> 
+                    <div class="form-group"> 
+                        <label for="phone">Phone Number</label> 
+                        <input type="tel" id="phone" name="phone" placeholder="Phone Number" required oninput="updateSectionCompletionStatus()"> 
+                    </div> 
+                </div> 
+                <div class="form-group" style="margin-bottom: 0;"> 
+                    <label for="email">Email Address</label> 
+                    <input type="email" id="email" name="email" placeholder="Email Address" required oninput="updateSectionCompletionStatus()"> 
+                </div> 
+            </div> 
+        </div> 
+
+        <!-- Section 2: Item Intake with Card Search API & Defect Selection --> 
+        <div class="portal-section" id="sectionIntake"> 
+            <div class="portal-section-header" onclick="togglePortalSection(this)"> 
+                <span>2. Item Intake, TCG Search & Defect Matrix</span> 
+                <span class="section-toggle-icon">▲</span> 
+            </div> 
+            <div class="portal-section-content"> 
+                <div id="cardsContainer">
+                    <!-- Dynamic cards go here -->
+                </div> 
+                <button type="button" class="btn-add-card" onclick="addCardBlock()"> 
+                    + Add Card To Ticket 
+                </button> 
+            </div> 
+        </div> 
+
+        <!-- Section 3: Protection Add-Ons & Shipping Logistics --> 
+        <div class="portal-section" id="sectionShipping"> 
+            <div class="portal-section-header" onclick="togglePortalSection(this)"> 
+                <span>3. Protection Add-Ons & Shipping Logistics</span> 
+                <span class="section-toggle-icon">▲</span> 
+            </div> 
+            <div class="portal-section-content"> 
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Select one protection tier per card below:</p> 
+                
+                <div class="package-grid"> 
+                    <div class="package-card" onclick="selectRadioCard(this)"> 
+                        <label> 
+                            <span>No Extra Protection</span> 
+                            <input type="radio" name="protection_tier" value="0" onchange="updateSectionCompletionStatus(); calculateFinancials();"> 
+                        </label> 
+                        <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$0.00 / card</span> 
+                        <ul> 
+                            <li>✓ Standard Return Packaging</li> 
+                        </ul> 
+                    </div> 
+                    <div class="package-card" onclick="selectRadioCard(this)"> 
+                        <label> 
+                            <span>TFL-01 Vault Prep</span> 
+                            <input type="radio" name="protection_tier" value="0.65" onchange="updateSectionCompletionStatus(); calculateFinancials();"> 
+                        </label> 
+                        <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$0.65 / card</span> 
+                        <ul> 
+                            <li>✓ Inner & Outer Sleeve</li> 
+                            <li>✓ Semi-Rigid Holder</li> 
+                        </ul> 
+                    </div> 
+                    <div class="package-card" onclick="selectRadioCard(this)"> 
+                        <label> 
+                            <span>TFL-02 Showcase</span> 
+                            <input type="radio" name="protection_tier" value="3.50" onchange="updateSectionCompletionStatus(); calculateFinancials();"> 
+                        </label> 
+                        <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$3.50 / card</span> 
+                        <ul> 
+                            <li>✓ Inner & Outer Sleeved</li> 
+                            <li>✓ Top Loader Holder</li> 
+                        </ul> 
+                    </div> 
+                    <div class="package-card" onclick="selectRadioCard(this)"> 
+                        <label> 
+                            <span>TFL-03 Acrylic Case</span> 
+                            <input type="radio" name="protection_tier" value="7.50" onchange="updateSectionCompletionStatus(); calculateFinancials();"> 
+                        </label> 
+                        <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$7.50 / card</span> 
+                        <ul> 
+                            <li>✓ Inner & Outer Sleeved</li> 
+                            <li>✓ Acrylic Case (Magnetic)</li> 
+                        </ul> 
+                    </div> 
+                </div> 
+
+                <div class="form-group" style="margin-top: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 2px solid var(--neon-blue); padding: 1.3rem; border-radius: 12px;"> 
+                    <label for="shippingCarrier" style="color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 0.6rem;"> 
+                        RETURN SHIPPING LOGISTICS (Origin: Croydon, PA) 
+                    </label> 
+                    <select id="shippingCarrier" name="shippingCarrier" required onchange="handleShippingChange();" style="font-weight: 600; border-color: var(--neon-blue);"> 
+                        <option value="" disabled selected>-- Select Shipping Option --</option>
+                        <option value="1.31">Tier 1: Plain Envelope | $1.31 (0% Insurance)</option> 
+                        <option value="6.95">Tier 2: Bubble Mailer | $6.95 Est. (Tracking + $100 Ins)</option> 
+                        <option value="12.50">Tier 3: Priority Mail | $12.50 Est. (Tracking + $100 Ins)</option> 
+                    </select> 
+                </div> 
+
+                <div id="envelopeLiabilityWrapper" class="form-group" style="display: none; background: rgba(244, 63, 94, 0.06); border: 2px solid var(--poke-red); padding: 1.2rem; border-radius: 10px; margin-top: 1rem;"> 
+                    <h4 style="font-family: 'Orbitron', sans-serif; color: var(--poke-red); font-size: 0.88rem; margin-bottom: 0.5rem;">MANDATORY LIABILITY WAIVER</h4> 
+                    <label style="cursor: pointer; font-weight: normal; color: var(--text-main); font-size: 0.85rem;"> 
+                        <input type="checkbox" id="envelopeLiabilityCheck" name="envelopeLiabilityCheck" onchange="updateSectionCompletionStatus();" style="width: 18px; height: 18px; accent-color: var(--poke-red);"> 
+                        <span><strong>I waive all liability and assume 100% financial risk</strong> for Tier 1 standard envelope transit.</span> 
+                    </label> 
+                </div> 
+            </div> 
+        </div> 
+
+        <!-- Section 4: Legal Terms & Submission --> 
+        <div class="portal-section" id="sectionLegal"> 
+            <div class="portal-section-header" onclick="togglePortalSection(this)"> 
+                <span>4. Legal Terms & Submission</span> 
+                <span class="section-toggle-icon">▲</span> 
+            </div> 
+            <div class="portal-section-content"> 
+                <div class="legal-box">
+                    <h4>Terms of Service & Liability Limitation</h4>
+                    <p>By submitting this intake form, you acknowledge that TFL Card Lab performs physical restoration procedures that inherently carry risk. We utilize precision techniques but do not guarantee grade increases or specific monetary value returns. Operator @tedflarsenjr maintains strict custody protocols; however, aggregate liability for damaged items during restoration is capped at the pre-restoration raw market value.</p>
+                </div>
+                <label style="cursor: pointer; font-weight: normal; font-size: 0.85rem; margin-bottom: 1rem;"> 
+                    <input type="checkbox" id="legalAgreeCheck" required onchange="updateSectionCompletionStatus();" style="width: 18px; height: 18px; accent-color: var(--success-green);"> 
+                    <span>I have read and agree to the TFL Card Lab Service Terms and Liability Limits.</span> 
+                </label> 
+                <button type="submit" class="btn-submit" id="finalSubmitBtn" disabled>SUBMIT INTAKE REQUEST</button>
+            </div> 
+        </div>
+
+        <!-- Financial Summary Footer --> 
+        <div class="financial-summary"> 
+            <div class="financial-summary-header"> 
+                <div> 
+                    <h3 style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-size: 1.05rem; margin-bottom: 0.2rem;"> 
+                        ESTIMATED TOTAL OUT-OF-POCKET 
+                    </h3> 
+                </div> 
+                <div style="text-align: right;"> 
+                    <span id="totalEstimateDisplay" style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--poke-gold); font-weight: bold;">$0.00</span> 
+                </div> 
+            </div> 
+            
+            <div style="border-top: 1px solid var(--border-color); margin-top: 0.9rem; padding-top: 0.5rem;"> 
+                <div class="summary-row"> 
+                    <span>Total Cards Submitted</span> 
+                    <span id="totalCardsCount">0</span> 
+                </div> 
+                <div class="pricing-row"> 
+                    <div class="item-main"> 
+                        <span>Evaluation Fees</span> 
+                        <span id="evalFeeDisplay">$0.00</span> 
+                    </div> 
+                </div> 
+                <div class="pricing-row"> 
+                    <div class="item-main"> 
+                        <span>Labor & Services</span> 
+                        <span id="laborDisplay">$0.00</span> 
+                    </div> 
+                </div> 
+                <div class="summary-row"> 
+                    <span>Protection Add-ons</span> 
+                    <span id="suppliesDisplay">$0.00</span> 
+                </div> 
+                <div class="summary-row" style="font-weight: bold; color: var(--neon-blue); border-bottom: none;"> 
+                    <span>Return Logistics</span> 
+                    <span id="shippingDisplay">$0.00</span> 
+                </div> 
+                
+                <button type="button" class="btn-invoice-action" onclick="openInvoiceModal()"> 
+                    View & Print "NOT PAID" Invoice Preview 
+                </button> 
+            </div> 
+        </div> 
+    </form>
+</div> 
+
+<script>
+    // --- UI Toggles ---
+    function togglePortalSection(headerElem) {
+        const section = headerElem.parentElement;
+        section.classList.toggle('collapsed');
+    }
+
+    // --- Card Handling with Pokémon API & Defects ---
+    let cardIndex = 0;
+    
+    function addCardBlock() {
+        cardIndex++;
+        const container = document.getElementById('cardsContainer');
+        const block = document.createElement('div');
+        block.className = 'card-entry-block';
+        block.id = `cardBlock_${cardIndex}`;
+        block.innerHTML = `
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                <span style="font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--poke-gold);">Card Entry #${cardIndex}</span>
+                <button type="button" class="btn-remove-card" onclick="document.getElementById('cardBlock_${cardIndex}').remove(); updateSectionCompletionStatus(); calculateFinancials();">✕</button>
+            </div>
+            
+            <div class="form-group" style="position: relative;">
+                <label>Card Search (Live TCG / Pokémon API)</label>
+                <input type="text" class="card-search-input" placeholder="Type card name (e.g. Charizard, Pikachu)..." oninput="searchCardApi(this)">
+                <div class="search-results-dropdown"></div>
+            </div>
+
+            <div class="form-group">
+                <label>Confirmed Card Description</label>
+                <input type="text" class="card-desc-input" placeholder="Selected card details..." required oninput="updateSectionCompletionStatus(); calculateFinancials();">
+            </div>
+
+            <div class="form-group">
+                <label>Observed Surface & Structural Defects Matrix</label>
+                <div class="defects-grid">
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Light Scratch" onchange="updateSectionCompletionStatus()"> Light Surface Scratch</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Deep Scratch" onchange="updateSectionCompletionStatus()"> Deep Surface Scratch</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Edge Whitening" onchange="updateSectionCompletionStatus()"> Edge Whitening / Chipping</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Corner Ding" onchange="updateSectionCompletionStatus()"> Corner Ding / Softening</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Crease / Bend" onchange="updateSectionCompletionStatus()"> Crease / Structural Bend</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Surface Dirt" onchange="updateSectionCompletionStatus()"> Grime / Organic Film</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Printing Stain" onchange="updateSectionCompletionStatus()"> Factory Print Defect / Stain</label>
+                    <label class="defect-checkbox-label"><input type="checkbox" value="Centering Imbalance" onchange="updateSectionCompletionStatus()"> Heavy Centering Imbalance</label>
+                </div>
+            </div>
+        `;
+        container.appendChild(block);
+        updateSectionCompletionStatus();
+        calculateFinancials();
+    }
+
+    // --- Pokémon TCG API Search Logic ---
+    let searchTimeout = null;
+    function searchCardApi(inputElem) {
+        clearTimeout(searchTimeout);
+        const query = inputElem.value.trim();
+        const dropdown = inputElem.nextElementSibling;
+        
+        if (query.length < 2) {
+            dropdown.style.display = 'none';
+            dropdown.innerHTML = '';
+            return;
+        }
+
+        searchTimeout =setTimeout(() => {
+            fetch(`https://api.pokemontcg.io/v2/cards?q=name:${encodeURIComponent(query)}*&pageSize=8`)
+                .then(res => res.json())
+                .then(data => {
+                    dropdown.innerHTML = '';
+                    if (data.data && data.data.length > 0) {
+                        dropdown.style.display = 'block';
+                        data.data.forEach(card => {
+                            const item = document.createElement('div');
+                            item.className = 'search-result-item';
+                            item.innerHTML = `
+                                <img src="${card.images.small}" alt="${card.name}">
+                                <div>
+                                    <strong style="color: var(--text-main); display: block;">${card.name}</strong>
+                                    <span style="color: var(--text-muted);">${card.set.name} (#${card.number})</span>
+                                </div>
+                            `;
+                            item.onclick = () => {
+                                const block = inputElem.closest('.card-entry-block');
+                                const descInput = block.querySelector('.card-desc-input');
+                                descInput.value = `${card.set.name} - ${card.name} (#${card.number})`;
+                                dropdown.style.display = 'none';
+                                updateSectionCompletionStatus();
+                                calculateFinancials();
+                            };
+                            dropdown.appendChild(item);
+                        });
+                    } else {
+                        dropdown.style.display = 'block';
+                        dropdown.innerHTML = `<div style="padding: 0.8rem; color: var(--text-muted); font-size: 0.85rem;">No cards found. Type custom description below.</div>`;
+                    }
+                })
+                .catch(err => {
+                    console.error('API Error:', err);
+                    dropdown.style.display = 'none';
+                });
+        }, 350);
+    }
+
+    // Close search dropdowns when clicking outside
+    window.addEventListener('click', (e) => {
+        if (!e.target.classList.contains('card-search-input')) {
+            document.querySelectorAll('.search-results-dropdown').forEach(d => d.style.display = 'none');
+        }
+    });
+
+    // --- Radio Button Package Styling ---
+    function selectRadioCard(cardElem) {
+        document.querySelectorAll('.package-card').forEach(c => c.classList.remove('selected'));
+        cardElem.classList.add('selected');
+        const radio = cardElem.querySelector('input[type="radio"]');
+        if(radio) {
+            radio.checked = true;
+            updateSectionCompletionStatus();
+            calculateFinancials();
+        }
+    }
+
+    // --- Logic / Verification ---
+    function handleShippingChange() {
+        const val = document.getElementById('shippingCarrier').value;
+        const liabilityWrapper = document.getElementById('envelopeLiabilityWrapper');
+        if(val === "1.31") {
+            liabilityWrapper.style.display = 'block';
+        } else {
+            liabilityWrapper.style.display = 'none';
+        }
+        updateSectionCompletionStatus();
+        calculateFinancials();
+    }
+
+    function updateSectionCompletionStatus() {
+        // Section 1: Client Info
+        const clientName = document.getElementById('clientName').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const email = document.getElementById('email').value.trim();
+        const s1 = document.getElementById('sectionClient');
+        if (clientName && phone && email) {
+            s1.classList.add('completed');
+        } else {
+            s1.classList.remove('completed');
+        }
+
+        // Section 2: Cards
+        const cardInputs = document.querySelectorAll('.card-desc-input');
+        const s2 = document.getElementById('sectionIntake');
+        let allCardsFilled = cardInputs.length > 0;
+        cardInputs.forEach(input => {
+            if(!input.value.trim()) allCardsFilled = false;
+        });
+        
+        if (allCardsFilled) {
+            s2.classList.add('completed');
+        } else {
+            s2.classList.remove('completed');
+        }
+
+        // Section 3: Shipping & Protection
+        const s3 = document.getElementById('sectionShipping');
+        const shippingVal = document.getElementById('shippingCarrier').value;
+        const protectionChecked = document.querySelector('input[name="protection_tier"]:checked');
+        const needsLiability = (shippingVal === "1.31");
+        const liabilityChecked = document.getElementById('envelopeLiabilityCheck').checked;
+        
+        let s3Complete = true;
+        if (!shippingVal) s3Complete = false;
+        if (!protectionChecked) s3Complete = false;
+        if (needsLiability && !liabilityChecked) s3Complete = false;
+
+        if (s3Complete) {
+            s3.classList.add('completed');
+        } else {
+            s3.classList.remove('completed');
+        }
+
+        // Section 4: Legal & Final Button
+        const s4 = document.getElementById('sectionLegal');
+        const legalCheck = document.getElementById('legalAgreeCheck').checked;
+        const submitBtn = document.getElementById('finalSubmitBtn');
+        
+        if(legalCheck) {
+            s4.classList.add('completed');
+        } else {
+            s4.classList.remove('completed');
+        }
+
+        if (s1.classList.contains('completed') && 
+            s2.classList.contains('completed') && 
+            s3.classList.contains('completed') && 
+            s4.classList.contains('completed')) {
+            submitBtn.disabled = false;
+        } else {
+            submitBtn.disabled = true;
+        }
+    }
+
+    function calculateFinancials() {
+        const cardInputs = document.querySelectorAll('.card-desc-input');
+        const numCards = cardInputs.length;
+        
+        const evalFee = numCards * 5.00;
+        const labor = numCards * 15.00;
+        
+        let protectionVal = 0;
+        const selectedProtection = document.querySelector('input[name="protection_tier"]:checked');
+        if (selectedProtection) {
+            protectionVal = parseFloat(selectedProtection.value) * numCards;
+        }
+        
+        let shippingVal = 0;
+        const selectedShipping = document.getElementById('shippingCarrier').value;
+        if (selectedShipping) {
+            shippingVal = parseFloat(selectedShipping);
+        }
+
+        const grandTotal = evalFee + labor + protectionVal + shippingVal;
+
+        // Update UI
+        document.getElementById('totalCardsCount').innerText = numCards;
+        document.getElementById('evalFeeDisplay').innerText = "$" + evalFee.toFixed(2);
+        document.getElementById('laborDisplay').innerText = "$" + labor.toFixed(2);
+        document.getElementById('suppliesDisplay').innerText = "$" + protectionVal.toFixed(2);
+        document.getElementById('shippingDisplay').innerText = "$" + shippingVal.toFixed(2);
+        document.getElementById('totalEstimateDisplay').innerText = "$" + grandTotal.toFixed(2);
+        
+        // Update Invoice Preview elements
+        document.getElementById('invEvalFee').innerText = "$" + evalFee.toFixed(2);
+        document.getElementById('invLaborTotal').innerText = "$" + labor.toFixed(2);
+        document.getElementById('invSuppliesTotal').innerText = "$" + protectionVal.toFixed(2);
+        document.getElementById('invShippingTotal').innerText = "$" + shippingVal.toFixed(2);
+        document.getElementById('invGrandTotal').innerText = "$" + grandTotal.toFixed(2);
+        
+        // Rebuild Invoice Table Items
+        const invoiceBody = document.getElementById('invoiceCardsTableBody');
+        invoiceBody.innerHTML = "";
+        if(numCards === 0) {
+            invoiceBody.innerHTML = "<tr><td colspan='3'>No cards added yet.</td></tr>";
+        } else {
+            cardInputs.forEach((input, index) => {
+                const block = input.closest('.card-entry-block');
+                const checkedDefects = block ? Array.from(block.querySelectorAll('.defects-grid input:checked')).map(cb => cb.value) : [];
+                const defectText = checkedDefects.length > 0 ? `Defects: ${checkedDefects.join(', ')}` : 'Standard Assessment ($15.00 Base)';
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    <td>${input.value.trim() || 'Pending Card Description'}</td>
+                    <td>${defectText}</td>
+                `;
+                invoiceBody.appendChild(tr);
+            });
+        }
+    }
+
+    // --- Modal Handling ---
+    function openInvoiceModal() {
+        const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+        document.getElementById('invoiceDateDisplay').innerText = "Date: " + today;
+        document.getElementById('invoiceModal').style.display = 'flex';
+    }
+
+    function closeInvoiceModal() {
+        document.getElementById('invoiceModal').style.display = 'none';
+    }
+
+    // Initialize with 1 empty card block
+    window.onload = function() {
+        addCardBlock();
+    };
+</script>
+</body> 
+</html>
