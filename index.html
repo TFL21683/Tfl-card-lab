@@ -1,0 +1,1873 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TFL Card Lab - Comprehensive Master Intake Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #04060f;
+            --card-bg: #0b1329;
+            --card-inner: #131e38;
+            --border-color: #1e293b;
+            --neon-blue: #38bdf8;
+            --glow-blue: rgba(56, 189, 248, 0.2);
+            --poke-red: #f43f5e;
+            --poke-gold: #fbbf24;
+            --glow-gold: rgba(251, 191, 36, 0.2);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success-green: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: radial-gradient(circle at 50% 0%, #17153b 0%, var(--bg-dark) 70%);
+            color: var(--text-main);
+            padding: 2.5rem 1rem;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            line-height: 1.5;
+        }
+
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 600px;
+            background: radial-gradient(circle at 50% 15%, rgba(56, 189, 248, 0.07) 0%, transparent 65%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1140px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 20px;
+            padding: 2.5rem 3rem;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.9), 0 0 40px rgba(56, 189, 248, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 2px solid var(--border-color);
+            padding-bottom: 1.8rem;
+            margin-bottom: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-gold);
+            font-size: clamp(2.2rem, 5vw, 3rem);
+            font-weight: 900;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            text-shadow: 0 0 25px var(--glow-gold);
+        }
+
+        .tech-badge-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-top: 0.8rem;
+        }
+
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(56, 189, 248, 0.06);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            padding: 0.4rem 1.1rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            box-shadow: 0 0 12px var(--glow-blue);
+            letter-spacing: 0.5px;
+        }
+
+        /* Collapsible Section Accordions */
+        .portal-section {
+            background-color: var(--card-inner);
+            border: 1px solid var(--border-color);
+            border-radius: 14px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .portal-section:hover {
+            border-color: rgba(56, 189, 248, 0.4);
+        }
+
+        .portal-section.completed {
+            border-color: var(--success-green);
+        }
+
+        .portal-section.completed .portal-section-header {
+            border-bottom-color: var(--success-green);
+            color: var(--success-green);
+            text-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+        .portal-section-header {
+            font-family: 'Orbitron', sans-serif;
+            color: var(--poke-red);
+            font-size: 1.05rem;
+            padding: 1.2rem 1.5rem;
+            background: rgba(4, 6, 15, 0.4);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+            text-shadow: 0 0 10px rgba(244, 63, 94, 0.3);
+            letter-spacing: 1px;
+            gap: 1rem;
+            transition: color 0.3s ease, border-color 0.3s ease;
+        }
+
+        .portal-section-header > span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .section-toggle-icon {
+            font-size: 0.8rem;
+            color: var(--poke-gold);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .portal-section-content {
+            padding: 1.8rem;
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .portal-section.collapsed .portal-section-content {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .portal-section.collapsed .section-toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .btn-collapse-section {
+            background: rgba(56, 189, 248, 0.08);
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 1.5rem auto 0 auto;
+            transition: all 0.2s;
+        }
+
+        .btn-collapse-section:hover {
+            background: var(--neon-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 0 12px var(--glow-blue);
+        }
+
+        .card-entry-block {
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.6rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .card-entry-block:hover {
+            border-color: var(--neon-blue);
+            box-shadow: 0 12px 35px rgba(56, 189, 248, 0.12);
+        }
+
+        .card-entry-block.completed {
+            border-color: var(--success-green);
+        }
+
+        .card-header-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.2rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.8rem;
+            cursor: pointer;
+            user-select: none;
+            gap: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .card-header-bar > span:first-child {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .card-entry-block.completed .card-header-bar {
+            border-bottom-color: var(--success-green);
+        }
+
+        .card-entry-block.completed .card-title-text {
+            color: var(--success-green) !important;
+        }
+
+        .toggle-icon {
+            font-size: 0.8rem;
+            color: var(--poke-gold);
+            transition: transform 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .card-entry-content {
+            max-height: 6000px;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, padding 0.3s ease;
+            opacity: 1;
+        }
+
+        .card-entry-block.collapsed .card-entry-content {
+            max-height: 0;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+            pointer-events: none;
+        }
+
+        .card-entry-block.collapsed .card-header-bar {
+            margin-bottom: 0;
+            border-bottom: none;
+            padding-bottom: 0;
+        }
+
+        .card-entry-block.collapsed .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .btn-remove-card {
+            background: rgba(244, 63, 94, 0.12);
+            color: var(--poke-red);
+            border: 1px solid var(--poke-red);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-remove-card:hover {
+            background: var(--poke-red);
+            color: white;
+            box-shadow: 0 0 12px rgba(244, 63, 94, 0.5);
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+            position: relative;
+        }
+
+        label {
+            display: flex;
+            justify-content: space-between;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+            font-size: 0.88rem;
+        }
+
+        .guide-link {
+            color: var(--neon-blue);
+            font-size: 0.8rem;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: normal;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            transition: color 0.2s;
+        }
+
+        .guide-link:hover {
+            color: var(--poke-gold);
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            background-color: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            color: var(--text-main);
+            font-size: 0.92rem;
+            transition: all 0.2s;
+            font-family: 'Inter', sans-serif;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--poke-gold);
+            box-shadow: 0 0 12px var(--glow-gold);
+        }
+
+        /* Card Search Container Styling (Integrated Snippet) */
+        .card-search-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .card-search-container input,
+        .card-search-container button {
+            width: 100%;
+        }
+
+        /* Modal & Visual Blueprints */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(4, 6, 15, 0.92);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 1rem;
+            backdrop-filter: blur(6px);
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border: 2px solid var(--poke-gold);
+            border-radius: 16px;
+            max-width: 860px;
+            width: 100%;
+            padding: 2.2rem;
+            box-shadow: 0 0 50px var(--glow-gold);
+            position: relative;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1.2rem; right: 1.2rem;
+            background: var(--poke-red);
+            color: white;
+            border: none;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .modal-close:hover {
+            transform: scale(1.1);
+        }
+
+        .sketch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.2rem;
+            margin-top: 1.2rem;
+        }
+        .sketch-card {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 1.2rem;
+            border-radius: 10px;
+        }
+        .sketch-box {
+            width: 100%;
+            height: 110px;
+            background: #0d1221;
+            border: 1px solid var(--neon-blue);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.8rem;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.72rem;
+            color: var(--neon-blue);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ill-scratch { position: absolute; width: 100px; height: 2px; background: var(--poke-red); transform: rotate(-20deg); box-shadow: 0 0 6px var(--poke-red); }
+        .ill-whitening { position: absolute; bottom: 6px; left: 12px; right: 12px; height: 4px; border-bottom: 2px dashed var(--poke-gold); }
+        .ill-crease { position: absolute; width: 120px; height: 3px; background: #f43f5e; box-shadow: 0 0 10px #f43f5e; transform: rotate(15deg); }
+        .ill-bow { position: absolute; width: 100px; height: 35px; border-top: 3px solid var(--neon-blue); border-radius: 50%; top: 35px; }
+
+        /* Data Gauge Progress Indicators */
+        .gauge-container { margin-top: 0.6rem; }
+        .gauge-label-row { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 0.3rem; font-family: 'Orbitron', sans-serif; }
+        .gauge-bar { width: 100%; height: 7px; background: #1e293b; border-radius: 4px; overflow: hidden; position: relative; }
+        .gauge-fill { height: 100%; background: linear-gradient(90deg, var(--success-green), var(--neon-blue)); border-radius: 4px; transition: width 0.6s ease; }
+        .gauge-fill.warning { background: linear-gradient(90deg, var(--poke-gold), var(--poke-red)); }
+
+        .search-results {
+            margin-top: 0.5rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            border-radius: 9px;
+            max-height: 250px;
+            overflow-y: auto;
+            display: none;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+            z-index: 10;
+            position: absolute;
+            width: 100%;
+        }
+
+        .search-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.2s;
+            font-size: 0.88rem;
+        }
+
+        .search-item:hover { background-color: var(--card-inner); }
+        .search-item img { height: 42px; border-radius: 6px; border: 1px solid var(--border-color); }
+
+        .search-error-msg {
+            margin-top: 0.5rem;
+            padding: 0.75rem 1rem;
+            background: rgba(244, 63, 94, 0.1);
+            border: 1px solid var(--poke-red);
+            border-radius: 8px;
+            color: var(--poke-red);
+            font-size: 0.82rem;
+            display: none;
+        }
+
+        .card-preview-container {
+            display: none;
+            background: var(--bg-dark);
+            border: 1px solid var(--poke-gold);
+            padding: 1.2rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            gap: 1.5rem;
+            align-items: center;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .card-preview-container img {
+            height: 170px;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.6);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-add-card {
+            width: 100%;
+            background: rgba(56, 189, 248, 0.04);
+            border: 2px dashed var(--neon-blue);
+            color: var(--neon-blue);
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            padding: 1rem;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+        }
+
+        .btn-add-card:hover {
+            background: rgba(56, 189, 248, 0.12);
+            box-shadow: 0 0 20px var(--glow-blue);
+            border-color: var(--poke-gold);
+            color: var(--poke-gold);
+        }
+
+        .defect-card-grid { display: grid; grid-template-columns: 1fr; gap: 0.9rem; margin-top: 1rem; }
+        .defect-card { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 14px; transition: all 0.2s ease; }
+        .defect-card:hover { border-color: var(--neon-blue); }
+        .defect-title { font-weight: 700; font-size: 0.98rem; color: var(--text-main); }
+        .defect-desc { font-size: 0.85rem; color: var(--text-muted); margin: 6px 0 10px 0; line-height: 1.4; }
+
+        .tier-badge { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 7px; border-radius: 6px; margin-bottom: 6px; font-family: 'Orbitron', sans-serif; }
+
+        .badge-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+        .tier-1-basic, .tier-1-dirt { background: #dcfce7; color: #166534; }
+        .tier-2-scratches, .tier-2-moderate { background: #fef9c3; color: #854d0e; }
+        .tier-3-heavy { background: #fee2e2; color: #991b1b; }
+
+        .state-container { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+        .state-box { background: #0d1221; border: 1px solid var(--border-color); border-radius: 7px; padding: 8px; }
+        .state-header { font-size: 0.7rem; font-weight: 700; display: block; margin-bottom: 3px; font-family: 'Orbitron', sans-serif; }
+        .state-header.bad { color: #f43f5e; }
+        .state-header.good { color: #10b981; }
+        .state-text { font-size: 0.78rem; color: var(--text-muted); margin: 0; line-height: 1.3; }
+
+        .package-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 1rem; }
+        .package-card { background: var(--bg-dark); border: 1px solid var(--border-color); border-radius: 10px; padding: 1.2rem; transition: all 0.3s; }
+        .package-card:hover { border-color: var(--poke-gold); box-shadow: 0 5px 20px rgba(251, 191, 36, 0.12); }
+        .package-card label { font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--poke-gold); margin-bottom: 0.5rem; display: flex; align-items: center; justify-content: space-between; cursor: pointer; }
+        .package-card ul { list-style: none; font-size: 0.8rem; color: var(--text-muted); padding-left: 0; margin-top: 0.5rem; }
+        .package-card li { margin-bottom: 0.3rem; display: flex; align-items: center; gap: 0.5rem; }
+        .package-card input[type="checkbox"] { width: 17px; height: 17px; accent-color: var(--poke-gold); cursor: pointer; }
+
+        .legal-box {
+            background: var(--bg-dark);
+            border: 1px solid var(--border-color);
+            padding: 1.5rem;
+            border-radius: 10px;
+            max-height: 200px;
+            overflow-y: auto;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 1.2rem;
+        }
+        .legal-box h4 { color: var(--text-main); margin-bottom: 0.5rem; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; }
+
+        /* Sticky Financial Summary Footer */
+        .financial-summary {
+            background: var(--card-inner);
+            border: 2px solid var(--poke-gold);
+            padding: 1.5rem;
+            border-radius: 14px;
+            margin-top: 2rem;
+            position: sticky;
+            bottom: 1rem;
+            z-index: 50;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.9), 0 0 25px var(--glow-gold);
+            backdrop-filter: blur(12px);
+        }
+
+        .financial-summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.95rem;
+            align-items: center;
+        }
+
+        .pricing-row {
+            margin-bottom: 0.6rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.6rem;
+        }
+
+        .pricing-row:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .item-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-trigger {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+            border-radius: 50%;
+            width: 19px; height: 19px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+        }
+
+        .info-trigger:hover, .info-trigger[aria-expanded="true"] {
+            border-color: var(--poke-gold);
+            color: var(--poke-gold);
+            background: rgba(251, 191, 36, 0.1);
+        }
+
+        .fine-print-drawer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out, margin-top 0.3s ease-out, opacity 0.3s ease-out;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+            padding-left: 0.2rem;
+            opacity: 0;
+        }
+
+        .fine-print-drawer.open {
+            max-height: 180px;
+            margin-top: 0.4rem;
+            opacity: 1;
+        }
+
+        .surcharge-explanation-box {
+            background: rgba(251, 191, 36, 0.04);
+            border: 1px dashed var(--poke-gold);
+            border-radius: 9px;
+            padding: 0.9rem;
+            margin: 0.9rem 0;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+        .surcharge-explanation-box strong { color: var(--poke-gold); }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+
+        .btn-submit {
+            width: 100%;
+            background: linear-gradient(135deg, var(--poke-red) 0%, #9f1239 100%);
+            color: white;
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.15rem;
+            padding: 1.2rem;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 1.5rem;
+            letter-spacing: 2px;
+            box-shadow: 0 6px 25px rgba(244, 63, 94, 0.4);
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.8rem;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(244, 63, 94, 0.6);
+        }
+
+        @media (max-width: 768px) {
+            .grid { grid-template-columns: 1fr; }
+            .card-preview-container { flex-direction: column; text-align: center; }
+            .sketch-grid { grid-template-columns: 1fr; }
+            .container { padding: 1.2rem; }
+            .state-container { grid-template-columns: 1fr; }
+            .financial-summary { position: relative; bottom: 0; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Guide Modal -->
+    <div id="guideModal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" onclick="toggleGuide(false)">✕</button>
+            <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.4rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--poke-gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+                <h3 style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-size: 1.1rem;">Interactive Defect Blueprints & Threshold Gauges</h3>
+            </div>
+            <p style="font-size: 0.85rem; color: var(--text-muted);">Inspect structural restoration recovery thresholds before selecting evaluation zones.</p>
+
+            <div class="sketch-grid">
+                <div class="sketch-card">
+                    <div class="sketch-box">
+                        <span>Foil Bowing & C/S Curve</span>
+                        <div class="ill-bow"></div>
+                    </div>
+                    <strong style="font-size: 0.85rem; color: var(--text-main);">1. Holo / Reverse Bowing</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">RH chamber (65–70%) & weighted clamp cycles.</p>
+                    <div class="gauge-container">
+                        <div class="gauge-label-row">
+                            <span style="color: var(--success-green);">Correctable Rate</span>
+                            <span style="color: var(--success-green);">95% – 100%</span>
+                        </div>
+                        <div class="gauge-bar"><div class="gauge-fill" style="width: 98%;"></div></div>
+                    </div>
+                </div>
+                <div class="sketch-card">
+                    <div class="sketch-box">
+                        <span>Scratches & Surface Haze</span>
+                        <div class="ill-scratch"></div>
+                    </div>
+                    <strong style="font-size: 0.85rem; color: var(--text-main);">2. Gloss & Holo Scratches</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">Coat-safe micro-abrasive polymer pads.</p>
+                    <div class="gauge-container">
+                        <div class="gauge-label-row">
+                            <span style="color: var(--neon-blue);">Correctable Rate</span>
+                            <span style="color: var(--neon-blue);">50% – 80%</span>
+                        </div>
+                        <div class="gauge-bar"><div class="gauge-fill" style="width: 65%;"></div></div>
+                    </div>
+                </div>
+                <div class="sketch-card">
+                    <div class="sketch-box">
+                        <span>Edge Chipping & Whitening</span>
+                        <div class="ill-whitening"></div>
+                    </div>
+                    <strong style="font-size: 0.85rem; color: var(--text-main);">3. Edges & Corner Whitening</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">Micro-vapor hydration & precision stylus tooling.</p>
+                    <div class="gauge-container">
+                        <div class="gauge-label-row">
+                            <span style="color: var(--success-green);">Correctable Rate</span>
+                            <span style="color: var(--success-green);">70% – 90%</span>
+                        </div>
+                        <div class="gauge-bar"><div class="gauge-fill" style="width: 80%;"></div></div>
+                    </div>
+                </div>
+                <div class="sketch-card">
+                    <div class="sketch-box">
+                        <span>Core Crease & Color Break</span>
+                        <div class="ill-crease"></div>
+                    </div>
+                    <strong style="font-size: 0.85rem; color: var(--text-main);">4. Deep Crease (Color Broken)</strong>
+                    <p style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.3rem;">Multi-stage hydration & high-pressure clamping.</p>
+                    <div class="gauge-container">
+                        <div class="gauge-label-row">
+                            <span style="color: var(--poke-gold);">Mitigation Rate</span>
+                            <span style="color: var(--poke-gold);">30% – 50%</span>
+                        </div>
+                        <div class="gauge-bar"><div class="gauge-fill warning" style="width: 40%;"></div></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Confirmation Modal -->
+    <div id="successModal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center; max-width: 520px; border-color: var(--success-green); box-shadow: 0 0 50px rgba(16, 185, 129, 0.3);">
+            <div style="width: 64px; height: 64px; background: rgba(16, 185, 129, 0.12); border: 2px solid var(--success-green); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.2rem auto;">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--success-green)" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style="font-family: 'Orbitron', sans-serif; color: var(--success-green); font-size: 1.4rem; margin-bottom: 0.5rem;">Intake Request Authorized!</h3>
+            <p style="font-size: 0.9rem; color: var(--text-muted); line-height: 1.6; margin-bottom: 1.8rem;">
+                Your ticket has been successfully transmitted to TFL Card Lab. Operator logs have been updated and confirmation has been dispatched.
+            </p>
+            <button type="button" class="btn-submit" onclick="closeSuccessModal()" style="margin-top: 0; background: linear-gradient(135deg, var(--success-green) 0%, #047857 100%); box-shadow: 0 6px 25px rgba(16, 185, 129, 0.4);">
+                Start New Intake Ticket
+            </button>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>TFL CARD LAB</h1>
+            <div class="tech-badge-group">
+                <span class="tech-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                    OPERATOR: @tedflarsenjr
+                </span>
+                <span class="tech-badge">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+                    TECH ID: TFL21683
+                </span>
+            </div>
+            <p style="color: var(--text-muted); margin-top: 0.8rem; font-size: 0.9rem; text-align: center;">
+                Diagnostic Surface Correction, Structural Restoration & Vault Prep Portal
+            </p>
+        </header>
+
+        <form id="intakeForm" action="https://formspree.io/f/myegwlnz" method="POST">
+            <input type="hidden" name="_subject" value="New TFL Card Lab Intake Request Received">
+
+            <!-- Section 1: Client Information -->
+            <div class="portal-section" id="sectionClient">
+                <div class="portal-section-header" onclick="togglePortalSection(this)">
+                    <span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        1. Client Information
+                    </span>
+                    <span class="section-toggle-icon">▲</span>
+                </div>
+                <div class="portal-section-content">
+                    <div class="grid">
+                        <div class="form-group">
+                            <label for="clientName">Full Name</label>
+                            <input type="text" id="clientName" name="clientName" placeholder="Full Name" required oninput="updateSectionCompletionStatus()">
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone" placeholder="Phone Number" required oninput="updateSectionCompletionStatus()">
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="Email Address" required oninput="updateSectionCompletionStatus()">
+                    </div>
+                    <button type="button" class="btn-collapse-section" onclick="collapseParentSection(this)">
+                        ▲ Collapse Section
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 2: Item Intake & Defect Assessment -->
+            <div class="portal-section" id="sectionIntake">
+                <div class="portal-section-header" onclick="togglePortalSection(this)">
+                    <span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        2. Item Intake & Comprehensive Multi-Defect Assessment
+                    </span>
+                    <span class="section-toggle-icon">▲</span>
+                </div>
+                <div class="portal-section-content">
+                    <div id="cardsContainer"></div>
+
+                    <button type="button" class="btn-add-card" onclick="handleAddCardClick(event)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Add Another Card To Ticket
+                    </button>
+
+                    <div class="form-group" style="background: rgba(56, 189, 248, 0.03); border: 1px solid var(--neon-blue); padding: 1.1rem; border-radius: 10px; margin-bottom: 0;">
+                        <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; font-weight: normal; color: var(--text-main); margin-bottom: 0;">
+                            <input type="checkbox" id="digitalImagesAvailable" name="digitalImagesAvailable" value="Yes" checked style="width: 18px; height: 18px; accent-color: var(--neon-blue); cursor: pointer;">
+                            <span><strong>Digital Images Confirmation:</strong> I am able to send digital images of the defects / damage on the card(s) over once this submission form is completed.</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-collapse-section" onclick="collapseParentSection(this)">
+                        ▲ Collapse Section
+                    </button>
+                </div>
+            </div>
+
+            <!-- Section 3: Protection Add-Ons & Shipping Logistics -->
+            <div class="portal-section" id="sectionShipping">
+                <div class="portal-section-header" onclick="togglePortalSection(this)">
+                    <span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/></svg>
+                        3. Protection Add-Ons & Shipping Logistics
+                    </span>
+                    <span class="section-toggle-icon">▲</span>
+                </div>
+                <div class="portal-section-content">
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Select your required protection tiers below:</p>
+
+                    <div class="package-grid">
+                        <div class="package-card">
+                            <label>
+                                <span>TFL-01 Vault Prep</span>
+                                <input type="checkbox" name="pkg_tfl01" value="0.65" onchange="calculateFinancials()">
+                            </label>
+                            <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$0.65 / card</span>
+                            <ul>
+                                <li>✓ Inner Sleeve & Outer Sleeve (Double Sleeved)</li>
+                                <li>✓ Semi-Rigid Holder</li>
+                            </ul>
+                        </div>
+                        <div class="package-card">
+                            <label>
+                                <span>TFL-02 Showcase</span>
+                                <input type="checkbox" name="pkg_tfl02" value="3.50" onchange="calculateFinancials()">
+                            </label>
+                            <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$3.50 / card</span>
+                            <ul>
+                                <li>✓ Inner & Outer Double Sleeved</li>
+                                <li>✓ Top Loader Holder</li>
+                            </ul>
+                        </div>
+                        <div class="package-card">
+                            <label>
+                                <span>TFL-03 Acrylic Case</span>
+                                <input type="checkbox" name="pkg_tfl03" value="7.50" onchange="calculateFinancials()">
+                            </label>
+                            <span style="font-size: 0.8rem; color: var(--poke-gold); display: block; margin-bottom: 0.4rem; font-weight: 600;">$7.50 / card</span>
+                            <ul>
+                                <li>✓ Inner & Outer Double Sleeved</li>
+                                <li>✓ Acrylic Case (Magnetic or Slide)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.5rem; background: rgba(56, 189, 248, 0.05); border: 2px solid var(--neon-blue); padding: 1.3rem; border-radius: 12px; box-shadow: 0 0 20px var(--glow-blue);">
+                        <label for="shippingCarrier" style="color: var(--neon-blue); font-family: 'Orbitron', sans-serif; font-size: 0.88rem; font-weight: 700; margin-bottom: 0.6rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
+                            RETURN SHIPPING LOGISTICS & PROTECTION TIERS (Origin: Croydon, PA 19021)
+                        </label>
+                        <select id="shippingCarrier" name="shippingCarrier" required onchange="calculateFinancials()" style="font-weight: 600; border-color: var(--neon-blue);">
+                            <option value="1.31">Tier 1: Plain Envelope (Double Sleeve + Top Loader) | $1.31 ($0.82 base + $0.49 Non-Machinable Stamp) - 0% Insurance / Complete Liability Waiver Required</option>
+                            <option value="6.95">Tier 2: Minimum Protection (Bubble/Rigid Mailer + Ding Defenders) | $6.95 Est. (USPS Ground Advantage ~3-4 oz) - Includes Tracking & $100 Insurance</option>
+                            <option value="12.50">Tier 3: Maximum Protection (Acrylic/Slab in Box or Priority Mail Padded Flat Rate) | $12.50 Est. (Priority Mail 1-3 Day) - Includes Tracking & $100 Insurance</option>
+                        </select>
+                    </div>
+
+                    <div id="envelopeLiabilityWrapper" class="form-group" style="display: none; background: rgba(244, 63, 94, 0.06); border: 2px solid var(--poke-red); padding: 1.2rem; border-radius: 10px; margin-top: 1rem; margin-bottom: 0;">
+                        <div style="display: flex; align-items: center; gap: 0.8rem; margin-bottom: 0.5rem;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--poke-red)" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                            <h4 style="font-family: 'Orbitron', sans-serif; color: var(--poke-red); font-size: 0.88rem;">MANDATORY LIABILITY WAIVER FOR STANDARD ENVELOPE SHIPPING</h4>
+                        </div>
+                        <p style="font-size: 0.82rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 0.8rem;">
+                            You have selected Tier 1 Plain Envelope shipping. USPS offers zero tracking and $0 insurance for standard letters. By checking below, you explicitly acknowledge that TFL Card Lab bears zero financial liability for any lost, stolen, delayed, or postal-crushed items sent via this uninsurable method.
+                        </p>
+                        <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; font-weight: normal; color: var(--text-main); font-size: 0.85rem; margin-bottom: 0;">
+                            <input type="checkbox" id="envelopeLiabilityCheck" name="envelopeLiabilityCheck" value="Agreed" onchange="calculateFinancials()" style="width: 18px; height: 18px; accent-color: var(--poke-red); cursor: pointer;">
+                            <span><strong>I waive all liability and assume 100% financial risk</strong> if my card(s) are lost, stolen, or damaged during standard envelope transit.</span>
+                        </label>
+                    </div>
+                    <button type="button" class="btn-collapse-section" onclick="collapseParentSection(this)">
+                        ▲ Collapse Section
+                    </button>
+                </div>
+            </div>
+
+            <!-- Financial Summary Footer -->
+            <div class="financial-summary">
+                <div class="financial-summary-header" onclick="toggleFinancialBreakdown()">
+                    <div>
+                        <h3 style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-size: 1.05rem; margin-bottom: 0.2rem; display: flex; align-items: center; gap: 0.6rem;">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+                            ESTIMATED TOTAL OUT-OF-POCKET
+                        </h3>
+                        <span style="font-size: 0.75rem; color: var(--neon-blue); display: inline-flex; align-items: center; gap: 0.3rem; margin-top: 2px;">
+                            <span id="breakdownToggleText">▼ Click to view/hide itemized list</span>
+                        </span>
+                    </div>
+                    <div style="text-align: right;">
+                        <span id="totalEstimateDisplay" style="font-family: 'Orbitron', sans-serif; font-size: 1.4rem; color: var(--poke-gold); font-weight: bold;">$6.31</span>
+                    </div>
+                </div>
+
+                <div id="itemizedBreakdownContainer" style="max-height: 0; overflow: hidden; transition: max-height 0.4s ease, opacity 0.3s ease; opacity: 0; margin-top: 0;">
+                    <div style="border-top: 1px solid var(--border-color); margin-top: 0.9rem; padding-top: 0.5rem;">
+                        <div class="summary-row">
+                            <span>Total Cards Submitted</span>
+                            <span id="totalCardsCount">1</span>
+                        </div>
+
+                        <div class="pricing-row">
+                            <div class="item-main">
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    Evaluation / Intake Fees
+                                    <button type="button" class="info-trigger" onclick="toggleFinePrint(this)" aria-expanded="false" title="Click for details">?</button>
+                                </span>
+                                <span id="evalFeeDisplay">$5.00</span>
+                            </div>
+                            <div class="fine-print-drawer">
+                                <p>Non-refundable evaluation fee of $5 per card, 100% credited directly toward restoration labor.</p>
+                            </div>
+                        </div>
+
+                        <div class="pricing-row">
+                            <div class="item-main">
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    Selected Service Tier Labor
+                                    <button type="button" class="info-trigger" onclick="toggleFinePrint(this)" aria-expanded="false" title="Click for details">?</button>
+                                </span>
+                                <span id="laborDisplay">$0.00</span>
+                            </div>
+                            <div class="fine-print-drawer">
+                                <p>Auto-calculated tier pricing based on selected card defects and complexity.</p>
+                            </div>
+                        </div>
+
+                        <div class="summary-row" id="bulkDiscountRow" style="display: none; color: var(--success-green);">
+                            <span>Bulk Cleaning Discount (10% Off Multi-Card Order)</span>
+                            <span id="bulkDiscountDisplay">-$0.00</span>
+                        </div>
+                        <div class="summary-row" id="delicateWorkRow" style="display: none; color: var(--neon-blue);">
+                            <span id="delicateWorkLabel">High-Value Delicate Tool Work & Handling Initial Fee</span>
+                            <span id="delicateWorkDisplay">$0.00</span>
+                        </div>
+                        <div class="summary-row" id="photoOptionRow" style="display: none; color: var(--poke-gold);">
+                            <span>High-Value Photo Documentation Add-on ($5.00 / card)</span>
+                            <span id="photoOptionDisplay">$0.00</span>
+                        </div>
+                        <div class="summary-row" id="discountRow" style="display: none; color: var(--success-green);">
+                            <span>Full Card Work-Up Discount (-15%)</span>
+                            <span id="discountDisplay">-$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Supplies & Protection Add-ons</span>
+                            <span id="suppliesDisplay">$0.00</span>
+                        </div>
+
+                        <div class="pricing-row" id="surchargePricingRow">
+                            <div class="item-main">
+                                <span style="display: flex; align-items: center; gap: 0.5rem;">
+                                    High-Value Valuation Surcharges
+                                    <button type="button" class="info-trigger" onclick="toggleFinePrint(this)" aria-expanded="false" title="Click for details">?</button>
+                                </span>
+                                <span id="surchargeDisplay">$0.00</span>
+                            </div>
+                            <div class="fine-print-drawer">
+                                <p>Mandatory enhanced handling & isolated vault staging for high-value assets ($500+).</p>
+                            </div>
+                        </div>
+
+                        <div class="surcharge-explanation-box">
+                            <strong>Why High-Value Surcharges?</strong> To ensure maximum protection, cards valued at $500 and above require specialized secure custody, isolated staging, and enhanced handling protocols. Surcharges are structured across four transparent tiers: <strong>$0</strong> for items under $500, <strong>1.5%</strong> for $500–$1,999, <strong>2.5%</strong> for $2,000–$4,999, and <strong>3.5%</strong> for $5,000+ grails.
+                        </div>
+
+                        <div class="pricing-row" id="insuranceSurchargeRow" style="display: none;">
+                            <div class="item-main">
+                                <span style="display: flex; align-items: center; gap: 0.5rem; color: var(--poke-gold);">
+                                    Additional USPS Shipping Insurance ($100+ Value)
+                                    <button type="button" class="info-trigger" onclick="toggleFinePrint(this)" aria-expanded="false" title="Click for details">?</button>
+                                </span>
+                                <span id="insuranceSurchargeDisplay" style="color: var(--poke-gold);">$0.00</span>
+                            </div>
+                            <div class="fine-print-drawer">
+                                <p>Covers additional postal insurance for return transit value exceeding standard coverage.</p>
+                            </div>
+                        </div>
+
+                        <div class="summary-row" style="font-weight: bold; color: var(--neon-blue); border-bottom: none;">
+                            <span>Return Logistics & Insurance</span>
+                            <span id="shippingDisplay">$1.31</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <input type="hidden" id="hiddenTotalEstimate" name="hiddenTotalEstimate" value="6.31">
+            <input type="hidden" id="hiddenItemizedSummary" name="hiddenItemizedSummary" value="">
+
+            <!-- Section 4: Legal Terms & Submission -->
+            <div class="portal-section" id="sectionLegal" style="margin-top: 1.5rem;">
+                <div class="portal-section-header" onclick="togglePortalSection(this)">
+                    <span>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                        4. Master Legal Terms & Liability Waiver
+                    </span>
+                    <span class="section-toggle-icon">▲</span>
+                </div>
+                <div class="portal-section-content">
+                    <div class="legal-box">
+                        <h4>BINDING LEGAL TERMS, RISK ASSUMPTION & WAIVER (REV 2026.1)</h4>
+                        <p><strong>1. INHERENT REPAIR RISKS:</strong> Collectible cardstock, foils, and inks respond unpredictably to pressure, heat, and chemical intervention. Processing may result in fiber tearing, blistering, layer separation, or total failure.</p>
+                        <p style="margin-top: 0.5rem;"><strong>2. COMPLETE LIABILITY WAIVER:</strong> The client voluntarily assumes all risks and releases TFL Card Lab, operator (@tedflarsenjr), and technicians from any claims regarding partial/total damage or altered condition.</p>
+                        <p style="margin-top: 0.5rem;"><strong>3. NO GRADING GUARANTEES:</strong> TFL Card Lab makes zero guarantees regarding third-party grading outcomes (PSA, CGC, BGS, SGC). Processed items carry inherent risk of receiving "Altered" or "Evidence of Restoration" designations.</p>
+                        <p style="margin-top: 0.5rem;"><strong>4. PENNSYLVANIA SAFE HARBOR LIABILITY CAP:</strong> Aggregate maximum financial liability for loss or damage is strictly capped at the lower of declared raw market value or the actual service labor fee paid.</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="clientSignature">Digital Signature / Full Legal Name Authorization *</label>
+                        <input type="text" id="clientSignature" name="clientSignature" placeholder="Type full legal name to sign & authorize" required oninput="updateSectionCompletionStatus()">
+                    </div>
+
+                    <div class="form-group" style="display: flex; align-items: center; gap: 0.8rem; margin-top: 1rem;">
+                        <input type="checkbox" id="authCheck" name="authCheck" required onchange="updateSectionCompletionStatus()" style="width: 18px; height: 18px; accent-color: var(--poke-gold); cursor: pointer;">
+                        <label for="authCheck" style="font-size: 0.85rem; font-weight: normal; margin-bottom: 0; cursor: pointer;">
+                            I certify that I have read, understood, and agree to all terms, disclaimers, risk assumptions, and liability waivers listed above.
+                        </label>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 1.2rem; margin-bottom: 0;">
+                        <label for="notes">Special Instructions or Restoration Directives</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Specify high-priority defects, target grades, or specific restoration goals..."></textarea>
+                    </div>
+                    <button type="button" class="btn-collapse-section" onclick="collapseParentSection(this)">
+                        ▲ Collapse Section
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-submit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+                Authorize Diagnostic & Submit Request
+            </button>
+        </form>
+    </div>
+
+    <script>
+        let cardCounter = 0;
+        let activeCardIds = new Set();
+        let isBreakdownOpen = false;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            addCardBlock(true);
+
+            // Client Section Box State Logic
+            const clientInputs = document.querySelectorAll('#sectionClient input');
+            const clientContainer = document.querySelector('#sectionClient');
+
+            function updateClientBoxState() {
+                const allComplete = Array.from(clientInputs).every(input => input.value.trim() !== '');
+                if (allComplete) {
+                    clientContainer.style.borderColor = '#22c55e'; // Green border
+                    clientContainer.style.backgroundColor = 'rgba(34, 197, 94, 0.05)'; // Subtle green tint
+                } else {
+                    clientContainer.style.borderColor = ''; // Reset to default
+                    clientContainer.style.backgroundColor = '';
+                }
+            }
+
+            clientInputs.forEach(input => {
+                input.addEventListener('input', updateClientBoxState);
+            });
+
+            // AJAX Formspree submission handler
+            const intakeForm = document.getElementById('intakeForm');
+            if (intakeForm) {
+                intakeForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    calculateFinancials(); // Ensure latest data and hidden inputs are synced
+
+                    const submitBtn = this.querySelector('.btn-submit');
+                    const originalBtnText = submitBtn.innerHTML;
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<span>Transmitting Ticket...</span>`;
+
+                    const formData = new FormData(this);
+
+                    try {
+                        const response = await fetch(this.action, {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json'
+                            }
+                        });
+
+                        if (response.ok) {
+                            showSuccessModal();
+                            this.reset();
+                            document.getElementById('cardsContainer').innerHTML = '';
+                            cardCounter = 0;
+                            activeCardIds.clear();
+                            addCardBlock(true);
+                            calculateFinancials();
+                        } else {
+                            const data = await response.json();
+                            if (data.errors) {
+                                alert('Submission validation error: ' + data.errors.map(err => err.message).join(', '));
+                            } else {
+                                alert('Oops! There was a problem submitting your form. Please check your fields and try again.');
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Submission network error:', error);
+                        alert('Network connection error. Please verify your connection and try submitting again.');
+                    } finally {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                    }
+                });
+            }
+        });
+
+        function showSuccessModal() {
+            document.getElementById('successModal').style.display = 'flex';
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').style.display = 'none';
+        }
+
+        function togglePortalSection(header) {
+            const section = header.closest('.portal-section');
+            section.classList.toggle('collapsed');
+        }
+
+        function collapseParentSection(button) {
+            const section = button.closest('.portal-section');
+            if (section) {
+                section.classList.add('collapsed');
+                section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
+        }
+
+        function toggleFinancialBreakdown() {
+            isBreakdownOpen = !isBreakdownOpen;
+            const container = document.getElementById('itemizedBreakdownContainer');
+            const toggleText = document.getElementById('breakdownToggleText');
+            if (isBreakdownOpen) {
+                container.style.maxHeight = (container.scrollHeight + 800) + 'px';
+                container.style.opacity = '1';
+                toggleText.textContent = '▲ Hide itemized list';
+            } else {
+                container.style.maxHeight = '0';
+                container.style.opacity = '0';
+                toggleText.textContent = '▼ Click to view/hide itemized list';
+            }
+        }
+
+        function toggleGuide(show) {
+            document.getElementById('guideModal').style.display = show ? 'flex' : 'none';
+        }
+
+        function toggleFinePrint(button) {
+            const row = button.closest('.pricing-row');
+            const drawer = row.querySelector('.fine-print-drawer');
+            const isOpen = drawer.classList.contains('open');
+
+            document.querySelectorAll('.fine-print-drawer').forEach(d => d.classList.remove('open'));
+            document.querySelectorAll('.info-trigger').forEach(b => b.setAttribute('aria-expanded', 'false'));
+
+            if (!isOpen) {
+                drawer.classList.add('open');
+                button.setAttribute('aria-expanded', 'true');
+            }
+
+            if (isBreakdownOpen) {
+                const container = document.getElementById('itemizedBreakdownContainer');
+                container.style.maxHeight = (container.scrollHeight + 800) + 'px';
+            }
+        }
+
+        function toggleCardBlock(blockId) {
+            const block = document.getElementById(`cardBlock_${blockId}`);
+            if (block) {
+                block.classList.toggle('collapsed');
+            }
+        }
+
+        function handleAddCardClick(e) {
+            if (e) e.preventDefault();
+            addCardBlock(false);
+        }
+
+        function addCardBlock(isInitial = false) {
+            cardCounter++;
+            const currentId = cardCounter;
+            activeCardIds.add(currentId);
+
+            const container = document.getElementById('cardsContainer');
+            const block = document.createElement('div');
+            block.className = 'card-entry-block';
+            block.id = `cardBlock_${currentId}`;
+
+            const showRemove = activeCardIds.size > 1;
+
+            block.innerHTML = `
+                <div class="card-header-bar" onclick="toggleCardBlock(${currentId})">
+                    <span>
+                        <span class="card-title-text" style="font-family: 'Orbitron', sans-serif; color: var(--poke-gold); font-weight: 700; font-size: 0.92rem;">CARD ENTRY #${currentId} ($0.00)</span>
+                    </span>
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-shrink: 0;">
+                        ${showRemove ? `<button type="button" class="btn-remove-card" title="Remove Card" onclick="event.stopPropagation(); removeCardBlock(${currentId})">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        </button>` : ''}
+                        <span class="toggle-icon">▲</span>
+                    </div>
+                </div>
+                <div class="card-entry-content">
+                    <div class="card-search-container form-group" style="position: relative;">
+                        <label>Card Database Search (Type Name / Set / Number)</label>
+                        <input type="text" class="card-search" placeholder="Type card name (e.g., Charizard, Pikachu)..." style="width: 100%; margin-bottom: 0.6rem;" autocomplete="off" oninput="updateSectionCompletionStatus()">
+                        <button type="button" class="btn-lookup-card" onclick="fetchCardData(${currentId})" style="width: 100%; background: rgba(56, 189, 248, 0.1); border: 1px solid var(--neon-blue); color: var(--neon-blue); padding: 0.7rem 1.1rem; border-radius: 9px; cursor: pointer; font-family: 'Orbitron', sans-serif; font-size: 0.8rem; font-weight: 700;">Lookup Card</button>
+                        <div class="search-error-msg"></div>
+                        <div class="search-results"></div>
+                    </div>
+                    <div class="card-preview-container">
+                        <img class="preview-img" src="" alt="Card Preview">
+                        <div style="flex: 1;">
+                            <h3 class="preview-title" style="color: var(--poke-gold); font-size: 1.05rem;">Selected Card</h3>
+                            <p class="preview-set" style="color: var(--text-muted); font-size: 0.82rem; margin-top: 0.3rem;"></p>
+                            <div style="margin-top: 0.8rem; display: flex; gap: 1.5rem; align-items: center;">
+                                <div>
+                                    <span style="font-size: 0.72rem; color: var(--text-muted); display: block;">MARKET RAW PRICE ($)</span>
+                                    <input type="number" step="0.01" min="0" class="manual-price-input" value="0.00" oninput="updateManualPrice(${currentId})" onchange="updateManualPrice(${currentId})" style="width: 120px; padding: 0.4rem; font-weight: bold; color: var(--success-green); background: var(--bg-dark);">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" name="cardDetails_${currentId}" class="hidden-details" value="Custom Card Submission">
+                    <input type="hidden" name="declaredRawValue_${currentId}" class="hidden-price" value="0">
+
+                    <div class="grid" style="margin-top: 1rem;">
+                        <div class="form-group">
+                            <label>Finish / Card Stock Type</label>
+                            <select name="cardFinish_${currentId}" class="card-finish-select" required onchange="updateSectionCompletionStatus()">
+                                <option value="Vintage WOTC Gloss">Vintage WOTC Gloss</option>
+                                <option value="Modern Foil / SAR / Ultra">Modern Foil / SAR / Ultra</option>
+                                <option value="Japanese / Import Stock">Japanese / Import Stock</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Correction Service Tier</label>
+                            <input type="text" class="auto-tier-display" value="Tier 1 Basic ($15.00)" readonly style="background: var(--bg-dark); color: var(--poke-gold); font-family: 'Orbitron', sans-serif; font-weight: 700;">
+                            <input type="hidden" name="serviceTier_${currentId}" class="hidden-tier-val" value="15">
+                            <div class="full-card-badge" style="display: none; color: var(--success-green); font-size: 0.75rem; font-family: 'Orbitron', sans-serif; margin-top: 0.3rem;">✓ Full Card Work-Up Active (-15%)</div>
+                        </div>
+                    </div>
+
+                    <div class="high-value-options-container form-group" style="display: none; background: rgba(251, 191, 36, 0.03); border: 1px dashed var(--poke-gold); padding: 1.1rem; border-radius: 10px;">
+                        <label style="color: var(--poke-gold); font-family: 'Orbitron', sans-serif; font-size: 0.85rem; margin-bottom: 0.8rem; display: block;">High-Value Card ($500+) Add-ons & Handling</label>
+                        <div style="display: flex; flex-direction: column; gap: 0.9rem;">
+                            <label style="display: flex; align-items: flex-start; gap: 0.8rem; font-weight: normal; font-size: 0.88rem; cursor: pointer; color: var(--text-main); margin-bottom: 0;">
+                                <input type="checkbox" class="photo-option-checkbox" name="cardPhotoOption_${currentId}" value="Yes" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--poke-gold); cursor: pointer; margin-top: 2px; flex-shrink: 0;">
+                                <span><strong>High-Value Photo Documentation Package:</strong> Detailed pre- and post-restoration macro shots ($5.00)</span>
+                            </label>
+                            <div class="delicate-work-subcontainer" style="display: none; border-top: 1px solid var(--border-color); padding-top: 0.8rem;">
+                                <label style="display: flex; align-items: flex-start; gap: 0.8rem; font-weight: normal; font-size: 0.88rem; color: var(--neon-blue); margin-bottom: 0;">
+                                    <input type="checkbox" disabled class="opacity-50 cursor-not-allowed delicate-work-checkbox" name="cardDelicateWork_${currentId}" value="Yes" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--neon-blue); margin-top: 2px; flex-shrink: 0;">
+                                    <span><strong>High-Value Delicate Tool Work & Handling:</strong> One-time flat rate initial charge (<span class="delicate-fee-label">$35.00</span>) for precision tactile tool intervention and safe asset stabilization. Charges apply strictly to tool-based labor; excludes passive restoration techniques like humidification or heat pressing. (Mandatory for high value)</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.2rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                            <strong style="font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--text-main);">Comprehensive Defect Assessment</strong>
+                            <span class="guide-link" onclick="toggleGuide(true)">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg> [View Visual Blueprints]
+                            </span>
+                        </div>
+                        <div class="defect-card-grid">
+                            <div class="defect-card">
+                                <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; margin-bottom: 5px;">
+                                    <input type="checkbox" name="defects_${currentId}[]" value="curling" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--poke-red); cursor: pointer;">
+                                    <span class="defect-title">1. Card Curling / Foil Bowing</span>
+                                </label>
+                                <div class="tier-badge tier-1-basic">Tier 1 · Basic</div>
+                                <p class="defect-desc">The card arches like a curve or potato chip, but has no sharp folds or paper cracks.</p>
+                                <div class="state-container">
+                                    <div class="state-box">
+                                        <span class="state-header bad">✕ NORMAL CURVE (BOWING)</span>
+                                        <p class="state-text">Smooth arched “C” or “S” shape. Lies unevenly on flat surfaces.</p>
+                                    </div>
+                                    <div class="state-box">
+                                        <span class="state-header good">✓ RESTORED GOAL</span>
+                                        <p class="state-text">100% flat profile. Moisture balanced inside foil & paper stock.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="defect-card">
+                                <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; margin-bottom: 5px;">
+                                    <input type="checkbox" name="defects_${currentId}[]" value="surface" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--poke-red); cursor: pointer;">
+                                    <span class="defect-title">2. Surface Oils, Dirt, or Scratches</span>
+                                </label>
+                                <div class="badge-group">
+                                    <span class="tier-badge tier-1-dirt">Tier 1 · Dirt</span>
+                                    <span class="tier-badge tier-2-scratches">Tier 2 · Scratches</span>
+                                </div>
+                                <p class="defect-desc">Fingerprints, wax, cloudy haze, or light topcoat hairline scuffs visible under angled light.</p>
+                                <div class="state-container">
+                                    <div class="state-box">
+                                        <span class="state-header bad">✕ LIGHT SCUFFS & HAZE</span>
+                                        <p class="state-text">Fine superficial scratches or dull film obscuring glossy finish.</p>
+                                    </div>
+                                    <div class="state-box">
+                                        <span class="state-header good">✓ RESTORED GOAL</span>
+                                        <p class="state-text">90%–100% removal of dirt/oils. Smooth reflection restored.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="defect-card">
+                                <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; margin-bottom: 5px;">
+                                    <input type="checkbox" name="defects_${currentId}[]" value="indentations" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--poke-red); cursor: pointer;">
+                                    <span class="defect-title">3. Corner Dings, Binder Impressions & Roller Lines</span>
+                                </label>
+                                <div class="tier-badge tier-2-moderate">Tier 2 · Moderate</div>
+                                <p class="defect-desc">Localized pressure marks, binder ring dings, or factory roller lines without tearing fibers.</p>
+                                <div class="state-container">
+                                    <div class="state-box">
+                                        <span class="state-header bad">✕ SURFACE INDENT</span>
+                                        <p class="state-text">Compressed cardstock creating a sightline shadow.</p>
+                                    </div>
+                                    <div class="state-box">
+                                        <span class="state-header good">✓ RESTORED GOAL</span>
+                                        <p class="state-text">70%–90% fiber recovery. Pressed area lifted back flush.</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="defect-card">
+                                <label style="display: flex; align-items: center; gap: 0.8rem; cursor: pointer; margin-bottom: 5px;">
+                                    <input type="checkbox" name="defects_${currentId}[]" value="creases" onchange="calculateFinancials()" style="width: 17px; height: 17px; accent-color: var(--poke-red); cursor: pointer;">
+                                    <span class="defect-title">4. Surface Wrinkles & Deep Creases</span>
+                                </label>
+                                <div class="tier-badge tier-3-heavy">Tier 3 · Heavy</div>
+                                <p class="defect-desc">Physical folds or bends in the cardstock (color intact or white inner core visible).</p>
+                                <div class="state-container">
+                                    <div class="state-box">
+                                        <span class="state-header bad">✕ WRINKLE VS WHITE CRACK</span>
+                                        <p class="state-text">Wrinkle = color intact. Deep crease = color broken, white core split.</p>
+                                    </div>
+                                    <div class="state-box">
+                                        <span class="state-header good">✓ RESTORED GOAL</span>
+                                        <p class="state-text">Mitigation only (30%–85%). Card flattened; line made subtle.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(block);
+            setupSearchListeners(block, currentId);
+            updateRemoveButtons();
+            calculateFinancials();
+
+            if (!isInitial) {
+                block.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        function removeCardBlock(id) {
+            if (activeCardIds.size <= 1) return;
+
+            const block = document.getElementById(`cardBlock_${id}`);
+            if (block) {
+                block.remove();
+                activeCardIds.delete(id);
+                updateRemoveButtons();
+                calculateFinancials();
+            }
+        }
+
+        function updateRemoveButtons() {
+            const allBlocks = document.querySelectorAll('.card-entry-block');
+            const showRemove = activeCardIds.size > 1;
+
+            allBlocks.forEach(block => {
+                const headerBar = block.querySelector('.card-header-bar');
+                let btn = block.querySelector('.btn-remove-card');
+
+                if (showRemove && !btn) {
+                    const blockId = parseInt(block.id.split('_')[1]);
+                    const actionContainer = headerBar.querySelector('div');
+                    btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn-remove-card';
+                    btn.title = 'Remove Card';
+                    btn.onclick = (e) => {
+                        e.stopPropagation();
+                        removeCardBlock(blockId);
+                    };
+                    btn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>`;
+                    actionContainer.insertBefore(btn, actionContainer.firstChild);
+                } else if (!showRemove && btn) {
+                    btn.remove();
+                }
+            });
+        }
+
+        function updateManualPrice(id) {
+            const block = document.getElementById(`cardBlock_${id}`);
+            if (!block) return;
+
+            const manualInput = block.querySelector('.manual-price-input');
+            const hiddenPrice = block.querySelector('.hidden-price');
+            let priceVal = parseFloat(manualInput.value) || 0;
+            if (priceVal < 0) priceVal = 0;
+
+            hiddenPrice.value = priceVal;
+
+            const headerTitle = block.querySelector('.card-title-text');
+            if (headerTitle) {
+                const cardName = block.querySelector('.preview-title').textContent;
+                const displayName = (cardName && cardName !== 'Selected Card') ? cardName : `CARD ENTRY #${id}`;
+                headerTitle.textContent = `${displayName} ($${priceVal.toFixed(2)})`;
+            }
+
+            calculateFinancials();
+        }
+
+        function setupSearchListeners(block, currentId) {
+            const input = block.querySelector('.card-search');
+            const lookupBtn = block.querySelector('.btn-lookup-card');
+            const results = block.querySelector('.search-results');
+            const errorMsg = block.querySelector('.search-error-msg');
+
+            lookupBtn.addEventListener('click', () => executeCardSearch(block, currentId));
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    executeCardSearch(block, currentId);
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!block.contains(e.target)) {
+                    results.style.display = 'none';
+                }
+            });
+        }
+
+        function executeCardSearch(block, currentId) {
+            const input = block.querySelector('.card-search');
+            const results = block.querySelector('.search-results');
+            const errorMsg = block.querySelector('.search-error-msg');
+            const preview = block.querySelector('.card-preview-container');
+            const query = input.value.trim();
+
+            results.innerHTML = '';
+            results.style.display = 'none';
+            errorMsg.style.display = 'none';
+
+            if (query.length < 2) {
+                errorMsg.textContent = 'Please enter at least 2 characters to search.';
+                errorMsg.style.display = 'block';
+                return;
+            }
+
+            results.innerHTML = `<div style="padding: 10px 14px; color: var(--text-muted); text-align: center;">Querying database...</div>`;
+            results.style.display = 'block';
+
+            const cleanQuery = encodeURIComponent(query.replace(/"/g, ''));
+            fetch(`https://api.pokemontcg.io/v2/cards?q=name:"${cleanQuery}*"&pageSize=10&orderBy=-set.releaseDate`)
+                .then(res => res.json())
+                .then(data => {
+                    results.innerHTML = '';
+                    if (data.data && data.data.length > 0) {
+                        errorMsg.style.display = 'none';
+                        data.data.forEach(card => {
+                            const item = document.createElement('div');
+                            item.className = 'search-item';
+                            let price = 0;
+
+                            if (card.tcgplayer && card.tcgplayer.prices) {
+                                const pObj = card.tcgplayer.prices;
+                                const variant = pObj.holofoil || pObj.normal || pObj.reverseHolofoil || pObj['1stEditionHolofoil'] || Object.values(pObj)[0];
+                                if (variant && variant.market) price = variant.market;
+                            }
+
+                            item.innerHTML = `<img src="${card.images.small}" alt="${card.name}"> <div> <strong>${card.name}</strong> (${card.set.name} - #${card.number})<br> <small style="color: #94a3b8;">Est. Raw Market: $${price.toFixed(2)}</small> </div>`;
+
+                            item.addEventListener('click', () => {
+                                input.value = `${card.name} (${card.set.name} #${card.number})`;
+                                block.querySelector('.preview-img').src = card.images.small;
+                                block.querySelector('.preview-title').textContent = card.name;
+                                block.querySelector('.preview-set').textContent = `Set: ${card.set.name} | #${card.number}`;
+                                block.querySelector('.manual-price-input').value = price.toFixed(2);
+                                block.querySelector('.hidden-price').value = price;
+                                block.querySelector('.hidden-details').value = `${card.name} - ${card.set.name} (#${card.number})`;
+
+                                const headerTitle = block.querySelector('.card-title-text');
+                                if (headerTitle) {
+                                    headerTitle.textContent = `${card.name} ($${price.toFixed(2)})`;
+                                }
+
+                                const finishSelect = block.querySelector('.card-finish-select');
+                                const cardNameLower = card.name.toLowerCase();
+                                const rarityLower = (card.rarity || '').toLowerCase();
+                                const setNameLower = card.set.name.toLowerCase();
+
+                                if (setNameLower.includes('japan') || cardNameLower.includes('jp') || setNameLower.includes('vmax climax')) {
+                                    finishSelect.value = "Japanese / Import Stock";
+                                } else if (
+                                    cardNameLower.includes('mega') ||
+                                    cardNameLower.includes('vmax') ||
+                                    cardNameLower.includes('vstar') ||
+                                    rarityLower.includes('ultra') ||
+                                    rarityLower.includes('secret') ||
+                                    rarityLower.includes('illustration') ||
+                                    rarityLower.includes('hyper')
+                                ) {
+                                    finishSelect.value = "Modern Foil / SAR / Ultra";
+                                } else {
+                                    finishSelect.value = "Vintage WOTC Gloss";
+                                }
+
+                                preview.style.display = 'flex';
+                                results.style.display = 'none';
+                                calculateFinancials();
+                            });
+                            results.appendChild(item);
+                        });
+                        results.style.display = 'block';
+                    } else {
+                        results.style.display = 'none';
+                        errorMsg.textContent = `No cards found matching "${query}". You can enter card details and pricing manually below.`;
+                        errorMsg.style.display = 'block';
+                    }
+                })
+                .catch(err => {
+                    console.error('API query error:', err);
+                    results.style.display = 'none';
+                    errorMsg.textContent = `Network connection limitation reached. Please enter card details and raw market value manually below.`;
+                    errorMsg.style.display = 'block';
+                });
+        }
+
+        function calculateFinancials() {
+            const cardBlocks = document.querySelectorAll('.card-entry-block');
+            const count = cardBlocks.length;
+            document.getElementById('totalCardsCount').textContent = count;
+
+            let totalLabor = 0;
+            let totalDelicateWorkCharges = 0;
+            let totalPhotoOptionCharges = 0;
+            let totalSurcharges = 0;
+            let maxCardValue = 0;
+            let totalCardWorkUpDiscount = 0;
+
+            let hasDelicateWorkActive = false;
+            let hasPhotoOptionActive = false;
+            let activeDelicateFee = 35;
+
+            cardBlocks.forEach(block => {
+                const price = parseFloat(block.querySelector('.hidden-price').value) || 0;
+                if (price > maxCardValue) maxCardValue = price;
+
+                const allCheckboxes = block.querySelectorAll('input[name^="defects_"]');
+                const checkedBoxes = Array.from(allCheckboxes).filter(cb => cb.checked).length;
+                const hasCreases = Array.from(allCheckboxes).some(cb => cb.checked && cb.value === "creases");
+
+                let baseTierPrice = 15;
+                let tierName = "Tier 1 Basic";
+
+                if (hasCreases || checkedBoxes >= 3) {
+                    baseTierPrice = 80;
+                    tierName = "Tier 3 Heavy ($80)";
+                } else if (checkedBoxes === 2) {
+                    baseTierPrice = 35;
+                    tierName = "Tier 2 Moderate ($35)";
+                } else {
+                    baseTierPrice = 15;
+                    tierName = "Tier 1 Basic ($15)";
+                }
+
+                block.querySelector('.auto-tier-display').value = tierName;
+                block.querySelector('.hidden-tier-val').value = baseTierPrice;
+                totalLabor += baseTierPrice;
+
+                let blockAllChecked = checkedBoxes === allCheckboxes.length && allCheckboxes.length > 0;
+                const fullCardBadge = block.querySelector('.full-card-badge');
+
+                if (blockAllChecked && allCheckboxes.length >= 4) {
+                    const cardDiscount = baseTierPrice * 0.15;
+                    totalCardWorkUpDiscount += cardDiscount;
+                    if (fullCardBadge) fullCardBadge.style.display = 'block';
+                } else {
+                    if (fullCardBadge) fullCardBadge.style.display = 'none';
+                }
+
+                const highValueContainer = block.querySelector('.high-value-options-container');
+                const delicateSubcontainer = block.querySelector('.delicate-work-subcontainer');
+                const photoCheckbox = block.querySelector('.photo-option-checkbox');
+                const delicateCheckbox = block.querySelector('.delicate-work-checkbox');
+                const delicateFeeLabel = block.querySelector('.delicate-fee-label');
+
+                if (price >= 500) {
+                    highValueContainer.style.display = 'block';
+                    if (photoCheckbox.checked) {
+                        totalPhotoOptionCharges += 5.00;
+                        hasPhotoOptionActive = true;
+                    }
+                    if (price >= 1000) {
+                        delicateSubcontainer.style.display = 'block';
+                        let fee = 35;
+                        if (price >= 2000) {
+                            fee = 70;
+                            activeDelicateFee = 70;
+                            if (delicateFeeLabel) delicateFeeLabel.textContent = '$70.00';
+                        } else {
+                            fee = 35;
+                            activeDelicateFee = 35;
+                            if (delicateFeeLabel) delicateFeeLabel.textContent = '$35.00';
+                        }
+
+                        delicateCheckbox.checked = true;
+                        delicateCheckbox.disabled = true;
+
+                        totalDelicateWorkCharges += fee;
+                        hasDelicateWorkActive = true;
+                    } else {
+                        delicateSubcontainer.style.display = 'none';
+                        delicateCheckbox.checked = false;
+                        delicateCheckbox.disabled = false;
+                    }
+                } else {
+                    highValueContainer.style.display = 'none';
+                    photoCheckbox.checked = false;
+                    delicateCheckbox.checked = false;
+                    delicateCheckbox.disabled = false;
+                }
+
+                if (price >= 5000) {
+                    totalSurcharges += (price * 0.035);
+                } else if (price >= 2000) {
+                    totalSurcharges += (price * 0.025);
+                } else if (price >= 500) {
+                    totalSurcharges += (price * 0.015);
+                }
+
+                const cardSearchVal = block.querySelector('.card-search').value.trim();
+                const hasDefects = checkedBoxes > 0;
+                if (cardSearchVal !== '' && hasDefects) {
+                    block.classList.add('completed');
+                } else {
+                    block.classList.remove('completed');
+                }
+            });
+
+            const bulkDiscountRow = document.getElementById('bulkDiscountRow');
+            let bulkDiscountAmount = 0;
+            if (count >= 2) {
+                bulkDiscountAmount = totalLabor * 0.10;
+                bulkDiscountRow.style.display = 'flex';
+                document.getElementById('bulkDiscountDisplay').textContent = `-$${bulkDiscountAmount.toFixed(2)}`;
+            } else {
+                bulkDiscountRow.style.display = 'none';
+            }
+
+            const shippingSelect = document.getElementById('shippingCarrier');
+            const shippingVal = parseFloat(shippingSelect.value) || 1.31;
+            const envelopeWrapper = document.getElementById('envelopeLiabilityWrapper');
+            const envelopeCheck = document.getElementById('envelopeLiabilityCheck');
+
+            if (shippingVal === 1.31) {
+                envelopeWrapper.style.display = 'block';
+                envelopeCheck.required = true;
+            } else {
+                envelopeWrapper.style.display = 'none';
+                envelopeCheck.required = false;
+                envelopeCheck.checked = false;
+            }
+
+            let insuranceSurcharge = 0;
+            const insuranceSurchargeRow = document.getElementById('insuranceSurchargeRow');
+            if (shippingVal > 1.31 && maxCardValue > 100) {
+                let excess = maxCardValue - 100;
+                let blocks = Math.ceil(excess / 100);
+                insuranceSurcharge = 3.45 + ((blocks - 1) * 1.25);
+                insuranceSurchargeRow.style.display = 'block';
+                document.getElementById('insuranceSurchargeDisplay').textContent = `$${insuranceSurcharge.toFixed(2)}`;
+            } else {
+                insuranceSurchargeRow.style.display = 'none';
+            }
+
+            const delicateWorkRow = document.getElementById('delicateWorkRow');
+            if (hasDelicateWorkActive) {
+                delicateWorkRow.style.display = 'flex';
+                document.getElementById('delicateWorkLabel').textContent = `High-Value Delicate Tool Work & Handling Initial Fee ($${activeDelicateFee})`;
+                document.getElementById('delicateWorkDisplay').textContent = `$${totalDelicateWorkCharges.toFixed(2)}`;
+            } else {
+                delicateWorkRow.style.display = 'none';
+            }
+
+            const photoOptionRow = document.getElementById('photoOptionRow');
+            if (hasPhotoOptionActive) {
+                photoOptionRow.style.display = 'flex';
+                document.getElementById('photoOptionDisplay').textContent = `$${totalPhotoOptionCharges.toFixed(2)}`;
+            } else {
+                photoOptionRow.style.display = 'none';
+            }
+
+            let perCardSupply = 0;
+            if (document.querySelector('input[name="pkg_tfl01"]').checked) perCardSupply += 0.65;
+            if (document.querySelector('input[name="pkg_tfl02"]').checked) perCardSupply += 3.50;
+            if (document.querySelector('input[name="pkg_tfl03"]').checked) perCardSupply += 7.50;
+
+            const totalSupplies = perCardSupply * count;
+            const evalFee = 5.00 * count;
+
+            const discountRow = document.getElementById('discountRow');
+            if (totalCardWorkUpDiscount > 0) {
+                discountRow.style.display = 'flex';
+                document.getElementById('discountDisplay').textContent = `-$${totalCardWorkUpDiscount.toFixed(2)}`;
+            } else {
+                discountRow.style.display = 'none';
+            }
+
+            const netLabor = totalLabor - bulkDiscountAmount - totalCardWorkUpDiscount;
+
+            document.getElementById('evalFeeDisplay').textContent = `$${evalFee.toFixed(2)}`;
+            document.getElementById('laborDisplay').textContent = `$${totalLabor.toFixed(2)}`;
+            document.getElementById('suppliesDisplay').textContent = `$${totalSupplies.toFixed(2)}`;
+            document.getElementById('surchargeDisplay').textContent = `$${totalSurcharges.toFixed(2)}`;
+            document.getElementById('shippingDisplay').textContent = `$${shippingVal.toFixed(2)}`;
+
+            const grandTotal = netLabor + totalDelicateWorkCharges + totalPhotoOptionCharges + totalSupplies + totalSurcharges + insuranceSurcharge + shippingVal;
+
+            document.getElementById('totalEstimateDisplay').textContent = `$${grandTotal.toFixed(2)}`;
+            document.getElementById('hiddenTotalEstimate').value = grandTotal.toFixed(2);
+            document.getElementById('hiddenItemizedSummary').value = `Cards:${count}|Labor:$${totalLabor.toFixed(2)}|BulkDisc:-$${bulkDiscountAmount.toFixed(2)}|FullCardWorkUpDisc:-$${totalCardWorkUpDiscount.toFixed(2)}|DelicateWork:$${totalDelicateWorkCharges.toFixed(2)}|Photos:$${totalPhotoOptionCharges.toFixed(2)}|Supplies:$${totalSupplies.toFixed(2)}|Surcharges:$${totalSurcharges.toFixed(2)}|Ship:$${shippingVal.toFixed(2)}|Ins:$${insuranceSurcharge.toFixed(2)}`;
+
+            if (isBreakdownOpen) {
+                const container = document.getElementById('itemizedBreakdownContainer');
+                container.style.maxHeight = (container.scrollHeight + 800) + 'px';
+            }
+
+            updateSectionCompletionStatus();
+        }
+
+        function updateSectionCompletionStatus() {
+            // Section 1: Client Information
+            const clientName = document.getElementById('clientName').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const sectionClient = document.getElementById('sectionClient');
+            if (clientName !== '' && phone !== '' && email !== '') {
+                sectionClient.classList.add('completed');
+            } else {
+                sectionClient.classList.remove('completed');
+            }
+
+            // Section 2: Intake & Cards
+            const cardBlocks = document.querySelectorAll('.card-entry-block');
+            const sectionIntake = document.getElementById('sectionIntake');
+            let allCardsComplete = cardBlocks.length > 0;
+            cardBlocks.forEach(b => {
+                const searchVal = b.querySelector('.card-search').value.trim();
+                const checkedDefects = b.querySelectorAll('input[name^="defects_"]:checked').length;
+                if (searchVal === '' || checkedDefects === 0) {
+                    allCardsComplete = false;
+                }
+            });
+
+            if (allCardsComplete && cardBlocks.length > 0) {
+                sectionIntake.classList.add('completed');
+            } else {
+                sectionIntake.classList.remove('completed');
+            }
+        }
+    </script>
+</body>
+</html>
