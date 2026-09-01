@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>TFL Card Lab - Live Intake & Diagnostics Sheet</title>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
+<style>
+  *, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+  @page {
+    size: letter portrait;
+    margin: 8mm 9mm 7mm 9mm;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #0f172a;
+    background-color: #e2e8f0;
+    font-size: 8pt;
+    line-height: 1.3;
+    display: flex;
+    justify-content: center;
+  }
+
+  /* SCREEN VIEW CONTAINER */
+  .page-container {
+    background-color: #ffffff;
+    max-width: 8.5in;
+    width: 100%;
+    height: auto; /* Let it grow naturally to fit all content */
+    min-height: 11in;
+    padding: 8mm 9mm 7mm 9mm;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    margin-top: 20px;
+    margin-bottom: 20px;
+    position: relative;
+    /* OVERFLOW HIDDEN WAS REMOVED HERE. IT WAS CLIPPING THE BOTTOM OFF. */
+  }
+
+  @media print {
+    body { background-color: #ffffff; display: block; }
+    .page-container { width: 100%; max-width: none; min-height: auto; padding: 0; box-shadow: none; margin: 0; }
+    .no-print { display: none !important; }
+  }
+
+  /* HEADER */
+  .header-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #0f172a;
+    color: #ffffff;
+    border-radius: 4px;
+    margin-bottom: 6px;
+  }
+
+  .header-left { padding: 8px 12px; vertical-align: middle; width: 58%; }
+  .header-right { padding: 6px 12px; vertical-align: middle; width: 42%; text-align: right; border-left: 1px solid #334155; background: #1e293b; }
+  .brand-title { font-size: 13.5pt; font-weight: 900; letter-spacing: 0.8px; text-transform: uppercase; margin: 0; line-height: 1.1; }
+  .brand-handles { font-size: 8pt; font-weight: 700; color: #38bdf8; letter-spacing: 0.5px; margin-top: 3px; }
+  .brand-subtitle { font-size: 6.8pt; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 2px; }
+
+  .barcode-container { display: inline-block; text-align: center; background: #ffffff; padding: 3px 6px 2px 6px; border-radius: 3px; }
+  .barcode-svg-wrap { display: block; height: 22px; overflow: hidden; }
+  .barcode-svg-wrap svg { height: 22px; margin-top: -2px; }
+  .barcode-label { font-size: 6pt; font-weight: 800; color: #0f172a; letter-spacing: 1px; font-family: monospace; margin-top: 1px; }
+
+  /* LAYOUT */
+  .layout-table { width: 100%; border-collapse: collapse; margin-bottom: 5px; table-layout: fixed; }
+  .col-half { width: 50%; vertical-align: top; }
+  .col-left { padding-right: 4px; }
+  .col-right { padding-left: 4px; }
+
+  /* SECTION BOXES */
+  .section-box { background: #ffffff; border: 1px solid #cbd5e1; border-radius: 4px; padding: 6px 8px; height: 100%; }
+  .section-title { font-size: 7.8pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: 0.4px; border-bottom: 1.5px solid #0284c7; padding-bottom: 3px; margin: 0 0 5px 0; }
+
+  /* FORMS & GRIDS */
+  .field-table { width: 100%; border-collapse: collapse; }
+  .field-table td { padding: 2.5px 2px; font-size: 7.5pt; vertical-align: middle; }
+  .field-label { font-weight: 700; color: #334155; white-space: nowrap; width: 22%; }
+  .field-line { border-bottom: 1px dashed #94a3b8; height: 12px; }
+
+  .box-check { display: inline-block; width: 9px; height: 9px; border: 1.2px solid #475569; background: #ffffff; border-radius: 2px; margin-right: 3px; vertical-align: -1px; }
+  
+  .matrix-table { width: 100%; border-collapse: collapse; }
+  .matrix-table th { background-color: #f1f5f9; color: #334155; font-size: 6.8pt; font-weight: 800; text-transform: uppercase; padding: 3.5px 5px; border: 1px solid #cbd5e1; text-align: left; }
+  .matrix-table td { border: 1px solid #e2e8f0; padding: 3.2px 5px; font-size: 7.2pt; vertical-align: middle; }
+  
+  .pill { display: inline-block; font-size: 5.8pt; padding: 1px 3.5px; border-radius: 2px; font-weight: bold; border: 0.8px solid #cbd5e1; background: #f8fafc; color: #475569; margin-right: 2px; }
+
+  .checkbox-grid { width: 100%; border-collapse: collapse; }
+  .checkbox-grid td { padding: 2.5px 2px; font-size: 7.2pt; vertical-align: middle; width: 50%; }
+
+  /* INVOICE TIER STYLING */
+  .invoice-table { width: 100%; border-collapse: collapse; }
+  .invoice-table th { background: #0f172a; color: #ffffff; font-size: 6.5pt; font-weight: 700; padding: 3px 5px; text-align: left; }
+  .invoice-table td { border: 1px solid #cbd5e1; padding: 3px 5px; font-size: 7pt; }
+  .invoice-group-header { background: #f8fafc; font-weight: 700; color: #334155; font-size: 6.5pt; text-transform: uppercase; }
+  .total-row { font-weight: 800; background-color: #f1f5f9; font-size: 7.5pt; }
+
+  .sign-table { width: 100%; border-collapse: collapse; margin-top: 4px; }
+  .sign-table td { padding: 2px 4px; font-size: 7.2pt; vertical-align: bottom; }
+  .sign-line { border-bottom: 1px solid #334155; height: 14px; }
+
+  /* Control Panel */
+  .control-panel { position: fixed; top: 20px; left: 20px; background: #fff; padding: 15px; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; border: 1px solid #cbd5e1; width: 200px; }
+  .btn { background: #0284c7; color: white; border: none; padding: 8px 12px; font-size: 8pt; font-weight: bold; border-radius: 4px; cursor: pointer; margin-bottom: 5px; width: 100%; }
+  .btn:hover { background: #0369a1; }
+  
+  @media (max-width: 768px) {
+    .control-panel { position: static; width: 100%; margin: 10px auto; border-radius: 0; box-shadow: none; border-left: none; border-right: none; }
+    .page-container { margin-top: 0; }
+  }
+</style>
+</head>
+<body onload="generateLiveBarcode()">
+
+  <!-- Screen Controls -->
+  <div class="control-panel no-print">
+    <div style="font-weight: bold; margin-bottom: 8px; font-size: 9pt;">Lab Terminal</div>
+    <button class="btn" onclick="generateLiveBarcode()">Sync Intake Clock</button>
+    <button class="btn" style="background:#0f172a;" onclick="window.print()">Print Internal Sheet</button>
+  </div>
+
+  <div class="page-container">
+    
+    <!-- HEADER -->
+    <table class="header-table">
+      <tr>
+        <td class="header-left">
+          <div class="brand-title">TFL CARD LAB</div>
+          <div class="brand-handles">@tedflarsenjr &bull; TFL21683</div>
+          <div class="brand-subtitle">Lab Diagnostics &bull; Mechanical Clamping &bull; Internal Invoice</div>
+        </td>
+        <td class="header-right">
+          <div class="barcode-container">
+            <div class="barcode-svg-wrap"><svg id="live-barcode"></svg></div>
+            <div class="barcode-label" id="barcode-text">INSP-LOADING...</div>
+          </div>
+          <div style="font-size: 6.2pt; color: #94a3b8; margin-top: 2px;" id="intake-text">Order: <strong>TFL-__________</strong> &bull; Intaked: Syncing...</div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ROW 1: CLIENT & CARD -->
+    <table class="layout-table">
+      <tr>
+        <td class="col-half col-left">
+          <div class="section-box">
+            <div class="section-title">1. Client & Submission Info</div>
+            <table class="field-table">
+              <tr><td class="field-label">Client Name:</td><td class="field-line"></td></tr>
+              <tr><td class="field-label">Contact/Email:</td><td class="field-line"></td></tr>
+              <tr><td class="field-label">Return Addr:</td><td class="field-line"></td></tr>
+              <tr>
+                <td class="field-label">Client Type:</td>
+                <td><span class="box-check"></span> Standard &nbsp; <span class="box-check"></span> Returning (5% Off) &nbsp; <span class="box-check"></span> Bulk</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+        <td class="col-half col-right">
+          <div class="section-box">
+            <div class="section-title">2. Asset Identification</div>
+            <table class="field-table">
+              <tr><td class="field-label">Card/Index:</td><td class="field-line"></td></tr>
+              <tr><td class="field-label">Set/Year:</td><td class="field-line"></td></tr>
+              <tr>
+                <td class="field-label">Finish:</td>
+                <td><span class="box-check"></span> Holo/Foil &nbsp; <span class="box-check"></span> Vintage Gloss &nbsp; <span class="box-check"></span> Non-Foil</td>
+              </tr>
+              <tr><td class="field-label">Declared Val:</td><td class="field-line" style="width: 50%;">$</td></tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ROW 2: OPTICAL DIAGNOSTICS -->
+    <div class="section-box" style="margin-bottom: 5px;">
+      <div class="section-title">3. Optical, Raking Light & 365nm UV Diagnostic (40x–60x)</div>
+      <table class="matrix-table">
+        <thead>
+          <tr>
+            <th style="width: 22%;">Defect Category</th>
+            <th style="width: 30%;">Diagnostic Intake Observation</th>
+            <th style="width: 24%;">Severity / Location</th>
+            <th style="width: 24%;">Recovery Viability</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Surface Particulate</strong></td>
+            <td><span class="box-check"></span> Dust/Grime <span class="box-check"></span> Organic Debris</td>
+            <td><span class="pill">Low</span> <span class="pill">Med</span> <span class="pill">High</span> | Q: ____</td>
+            <td><span class="box-check"></span> 100% Removable <span class="box-check"></span> Partial</td>
+          </tr>
+          <tr>
+            <td><strong>Lipids & Adhesives</strong></td>
+            <td><span class="box-check"></span> Fingerprint Oil <span class="box-check"></span> Wax/Gunk</td>
+            <td><span class="pill">Front</span> <span class="pill">Back</span> <span class="pill">Holo</span></td>
+            <td><span class="box-check"></span> Full Strip Safe <span class="box-check"></span> Film Risk</td>
+          </tr>
+          <tr>
+            <td><strong>Scratches/Lines</strong></td>
+            <td><span class="box-check"></span> Micro-hairlines <span class="box-check"></span> Print Line</td>
+            <td><span class="pill">Top Lacquer</span> <span class="pill">Sub-Foil</span></td>
+            <td><span class="box-check"></span> Polishable <span class="box-check"></span> Permanent</td>
+          </tr>
+          <tr>
+            <td><strong>Planar Distortion</strong></td>
+            <td><span class="box-check"></span> Foil Curl <span class="box-check"></span> Pinch Wave</td>
+            <td><span class="pill">&lt;2mm</span> <span class="pill">2-5mm</span> <span class="pill">&gt;5mm Arch</span></td>
+            <td><span class="box-check"></span> High Clamp Yield</td>
+          </tr>
+          <tr>
+            <td><strong>Edges & Corners</strong></td>
+            <td><span class="box-check"></span> Whitening <span class="box-check"></span> Silvering <span class="box-check"></span> Ding</td>
+            <td><span class="pill">TL</span> <span class="pill">TR</span> <span class="pill">BL</span> <span class="pill">BR</span> <span class="pill">Border</span></td>
+            <td><span class="box-check"></span> Edge Reform <span class="box-check"></span> Paper Loss</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- ROW 3: PROTOCOLS -->
+    <table class="layout-table">
+      <tr>
+        <td class="col-half col-left">
+          <div class="section-box">
+            <div class="section-title">4. Surface Decon Protocol</div>
+            <table class="checkbox-grid">
+              <tr>
+                <td><span class="box-check"></span> <strong>ESD Sweep:</strong> Soft goat-hair</td>
+                <td><span class="box-check"></span> <strong>Aqueous:</strong> DI micro-swab</td>
+              </tr>
+              <tr>
+                <td><span class="box-check"></span> <strong>Non-Polar:</strong> Residue strip</td>
+                <td><span class="box-check"></span> <strong>Capillary:</strong> Edge barrier</td>
+              </tr>
+              <tr>
+                <td><span class="box-check"></span> <strong>Foil Polish:</strong> 0.1μm optical</td>
+                <td><span class="box-check"></span> <strong>Refraction:</strong> Restored</td>
+              </tr>
+            </table>
+            <div style="font-size: 6.8pt; color: #475569; margin-top: 3px;"><strong>Solvent Batch / Notes:</strong> ___________________________________</div>
+          </div>
+        </td>
+        <td class="col-half col-right">
+          <div class="section-box">
+            <div class="section-title">5. Mechanical RH Clamping</div>
+            <table class="field-table">
+              <tr>
+                <td class="field-label">Pre-Cond RH%:</td>
+                <td style="font-size: 7.2pt;">
+                  <span class="box-check"></span> 55% &nbsp; <span class="box-check"></span> 58% &nbsp; <span class="box-check"></span> 62% &nbsp; (___ hrs)
+                </td>
+              </tr>
+              <tr>
+                <td class="field-label">Clamping Rig:</td>
+                <td style="font-size: 7.2pt;"><span class="box-check"></span> Acrylic &nbsp; <span class="box-check"></span> Aluminum Torque</td>
+              </tr>
+              <tr>
+                <td class="field-label">Release Sub:</td>
+                <td style="font-size: 7.2pt;"><span class="box-check"></span> Optical Silicone &nbsp; <span class="box-check"></span> Glassine</td>
+              </tr>
+              <tr>
+                <td class="field-label">Clamp Cycle:</td>
+                <td style="font-size: 7.2pt;">
+                  <span class="box-check"></span> 24h &nbsp; <span class="box-check"></span> 48h &nbsp; <span class="box-check"></span> 72h &nbsp; | <span class="box-check"></span> 100% Flat
+                </td>
+              </tr>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ROW 4: COMPLETED TREATMENTS & INVOICE -->
+    <table class="layout-table">
+      <tr>
+        <td class="col-half col-left">
+          <div class="section-box">
+            <div class="section-title">6. Conservation Treatments Completed</div>
+            <div style="font-size: 6pt; color: #64748b; margin-bottom: 6px; text-align: justify; line-height: 1.4;">
+              *TFL Card Lab does not assign, estimate, or guarantee 3rd-party grading scores (PSA/BGS/CGC), nor do we provide market appraisals. The checklist below formally documents the specific physical conservation procedures executed on this asset.
+            </div>
+            <table class="checkbox-grid" style="margin-top: 4px;">
+              <tr>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Surface Decon:</strong> Grime/Lipid Removal</td>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Foil Blending:</strong> Micro-Scratch Polish</td>
+              </tr>
+              <tr>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Planar Flatness:</strong> RH Chamber Clamp</td>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Edge Reform:</strong> Corner Compression</td>
+              </tr>
+              <tr>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Heavy Repair:</strong> Crease Core Injection</td>
+                <td style="padding-bottom: 7px;"><span class="box-check"></span> <strong>Liquid Mitigation:</strong> Delamination Press</td>
+              </tr>
+              <tr>
+                <td style="padding-bottom: 2px;"><span class="box-check"></span> <strong>Delicate Protocol:</strong> High-Value Staging</td>
+                <td style="padding-bottom: 2px;"><span class="box-check"></span> <strong>Final Polish:</strong> Gloss Refraction Reset</td>
+              </tr>
+            </table>
+          </div>
+        </td>
+        <td class="col-half col-right">
+          <div class="section-box">
+            <div class="section-title">7. Billing & Invoice Breakdown</div>
+            <table class="invoice-table">
+              <thead>
+                <tr>
+                  <th>Line Item Description</th>
+                  <th style="width: 25%; text-align: right;">Amount ($)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td colspan="2" class="invoice-group-header">Core Services</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> Diagnostic Bench Fee</td>
+                  <td style="text-align: right;">$ 5.00</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> Tier 1 Basic ($15) / <span class="box-check"></span> Tier 2 Mod ($28)</td>
+                  <td style="text-align: right;">$ ________</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> Tier 3 Heavy ($45) / <span class="box-check"></span> Clean Only ($8)</td>
+                  <td style="text-align: right;">$ ________</td>
+                </tr>
+                <tr>
+                  <td colspan="2" class="invoice-group-header">Add-Ons & Logistics</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> Priority Queue Surcharge (+50%)</td>
+                  <td style="text-align: right;">$ ________</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> High-Value Handling / Vault ($35+)</td>
+                  <td style="text-align: right;">$ ________</td>
+                </tr>
+                <tr>
+                  <td><span class="box-check"></span> Return Shipping & Protection Supplies</td>
+                  <td style="text-align: right;">$ ________</td>
+                </tr>
+                <tr class="total-row">
+                  <td style="text-align: right; text-transform: uppercase;">Total Invoice Due:</td>
+                  <td style="text-align: right; color: #0f172a; font-size: 8pt;">$ ________</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </td>
+      </tr>
+    </table>
+
+    <!-- ROW 5: AUTHORIZATION -->
+    <div class="section-box" style="margin-bottom: 0;">
+      <div class="section-title">8. Laboratory Liability Release & Sign-Off</div>
+      <div class="auth-notice">
+        <strong>WAIVER:</strong> TFL Card Lab strictly repairs existing material and makes zero guarantees regarding third-party grading outcomes (PSA, CGC, BGS). We do not add paints or rebuild structures. Processed items carry inherent risk of "Altered" designations. Maximum financial liability is strictly capped at the lower of declared raw market value or the actual service labor fee paid.
+      </div>
+      <table class="sign-table">
+        <tr>
+          <td style="width: 32%;"><div style="font-size: 6.5pt; color: #475569;">Lead Tech (TFL21683):</div><div class="sign-line"></div></td>
+          <td style="width: 18%;"><div style="font-size: 6.5pt; color: #475569;">Date:</div><div class="sign-line"></div></td>
+          <td style="width: 32%;"><div style="font-size: 6.5pt; color: #475569;">Client Acknowledgment:</div><div class="sign-line"></div></td>
+          <td style="width: 18%;"><div style="font-size: 6.5pt; color: #475569;">Date:</div><div class="sign-line"></div></td>
+        </tr>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    function generateLiveBarcode() {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const yyyy = now.getFullYear();
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      
+      const barcodeStr = mm + dd + yyyy + hh + min;
+      const displayStr = `${mm}/${dd}/${yyyy} ${hh}:${min}`;
+
+      JsBarcode("#live-barcode", barcodeStr, {
+        format: "CODE39",
+        width: 1.0,
+        height: 25,
+        displayValue: false,
+        lineColor: "#0f172a",
+        margin: 0
+      });
+
+      document.getElementById('barcode-text').innerText = "INSP-" + barcodeStr;
+      document.getElementById('intake-text').innerHTML = `Order: <strong>TFL-__________</strong> &bull; Intaked: ${displayStr} (Local)`;
+    }
+  </script>
+</body>
+</html>
+
